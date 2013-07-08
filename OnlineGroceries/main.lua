@@ -2,6 +2,6 @@ local storyboard = require("storyboard");
 
 function main()
 
-	storyboard.gotoScene("home.lua");
+	storyboard.gotoScene("scripts.home.HomeScene");
 
 end
