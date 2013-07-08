@@ -1,0 +1,70 @@
+body {
+    font: 11px "Trebuchet MS",sans-serif;
+}
+
+
+td {
+    border: 1px solid #000000;
+    border-collapse: collapse;
+    
+}
+
+form {
+}
+
+form label{
+    min-width: 60px;
+    max-width: 100px;
+}
+
+form input{
+}
+
+#menu{
+   float:left;
+   width:100%;
+   padding: 1em 0em 2em 35%;
+   position: relative;
+}
+
+#menu li {
+    display:inline;
+}
+
+#login{
+    width: 100%;
+    padding: 1em 0em 2em 43%;
+    position: absolute;
+}
+
+#menu ul{
+    padding:0;
+    position: relative;
+    margin:0;
+    list-style-type:none;
+}
+
+h1{
+    padding-left: 5%;
+}
+
+#menu li a{
+    float:left;
+    width:6em;
+    text-decoration:none;
+    color:white;
+    background-color:buttonface;
+    padding:1em 1em 1em 1em;
+    border-right:1px solid white;
+}
+
+#content{
+}
+
+#content .form-product {
+    
+}
+
+#content .form-product label {
+    min-width: 300px;
+}
