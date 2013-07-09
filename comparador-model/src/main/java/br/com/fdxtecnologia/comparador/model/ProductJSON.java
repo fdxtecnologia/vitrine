@@ -20,7 +20,8 @@ public class ProductJSON {
     private int quantity;
     private BigDecimal price;
     private BigDecimal totalPrice;
-    public static Type TYPE = new TypeToken<List<ProductJSON>>() {
+    private String sku;
+    public static final Type TYPE = new TypeToken<List<ProductJSON>>() {
     }.getType();
 
     public ProductJSON(Long idProduct, int quantity) {
@@ -31,12 +32,22 @@ public class ProductJSON {
     public ProductJSON() {
     }
 
-    public ProductJSON(Long idProduct, String title, int quantity, BigDecimal price) {
+    public ProductJSON(Long idProduct, String sku, String title, int quantity, BigDecimal price) {
+        this.sku = sku;
         this.idProduct = idProduct;
         this.title = title;
         this.quantity = quantity;
         this.price = price;
         this.totalPrice = this.price.multiply(new BigDecimal(this.quantity));
+    }
+    
+    public ProductJSON(Product product){
+        this.sku = product.getSku();
+        this.idProduct = product.getId();
+        this.title = product.getTitle();
+        this.quantity = 0;
+        this.price = product.getPrice();
+        this.totalPrice = BigDecimal.ZERO;
     }
 
     public Long getIdProduct() {
@@ -77,5 +88,13 @@ public class ProductJSON {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 }

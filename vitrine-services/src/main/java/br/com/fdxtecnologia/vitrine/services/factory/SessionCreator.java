@@ -24,6 +24,7 @@ public class SessionCreator implements ComponentFactory<Session> {
         this.session = HibernateFactory.getSession();
     }
 
+    @Override
     public Session getInstance() {
         return session;
     }
