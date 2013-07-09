@@ -2,6 +2,6 @@ local storyboard = require("storyboard");
 
 function main()
 
-	storyboard.gotoScene("scripts.home.HomeScene");
+	storyboard.gotoScene("scripts.menu.MenuScene");
 
 end
