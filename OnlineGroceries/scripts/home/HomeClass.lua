@@ -4,9 +4,9 @@ function new()
 	
 	home = {};
 	
-	
-	
-	
+	function home:buildCenario(JSON)
+            
+        end
 	
 	return home;
 end

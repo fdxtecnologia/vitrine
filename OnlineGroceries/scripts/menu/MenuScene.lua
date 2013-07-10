@@ -21,9 +21,7 @@ local scene = storyboard.newScene();
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
-        local menu = require("MenuClass").new();
-        local jsonHandler = require("scripts.Utils.JSONHandler").new();
-        local json = jsonHandler:getJSON();
+        local menu = require("scripts.menu.MenuClass").new();
         menu:buildMenu(group);
         -----------------------------------------------------------------------------
 
@@ -38,7 +36,6 @@ end
 -- Called BEFORE scene has moved onscreen:
 function scene:willEnterScene( event )
         local group = self.view
-
         -----------------------------------------------------------------------------
 
         --      This event requires build 2012.782 or later.
@@ -51,7 +48,7 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
         local group = self.view
-
+        
         -----------------------------------------------------------------------------
 
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
