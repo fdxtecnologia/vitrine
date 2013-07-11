@@ -28,4 +28,10 @@ public class ProductDAO extends GenericDAO<Product> {
         
         return query.list();
     }
+    
+    public List<Product> getAllProductsByMarket(Market m) {
+        String q = "from Product p where p.market = " + m.getId();
+        Query query = session.createQuery(q);
+        return query.list();
+    }
 }
