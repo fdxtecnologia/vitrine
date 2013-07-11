@@ -25,6 +25,7 @@ public class ProductDAO extends GenericDAO<Product> {
     public List<Product> getProductsByMarket(Market m, int page, int limit) {
         String q = "from Product p where p.market = " + m.getId();
         Query query = session.createQuery(q).setFirstResult(page * limit).setMaxResults(limit);
+        
         return query.list();
     }
 }
