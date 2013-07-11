@@ -45,4 +45,15 @@ public class ProductServices {
         }
         result.use(Results.json()).withoutRoot().from(products).serialize();
     }
+    
+    @Post
+    public void listMarketProducts(Long marketId) {
+        Market m = marketDAO.findById(marketId);
+        List<Product> list = productDAO.getAllProductsByMarket(m);
+        List<ProductJSON> products = new ArrayList<ProductJSON>();
+        for (Product p : list) {
+            products.add(new ProductJSON(p));
+        }
+        result.use(Results.json()).withoutRoot().from(products).serialize();
+    }    
 }

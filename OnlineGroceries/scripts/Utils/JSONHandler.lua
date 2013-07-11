@@ -3,7 +3,7 @@ module(...,package.seeall);
 function new()
     
     local jsonHandler = {};
-    local strJson
+    local strJson;
     
     function jsonHandler:getJSON(url)
       network.request( url, "GET", networkListener );
@@ -24,20 +24,10 @@ function new()
         return params;
     end
     
-    function jsonHandler:getJSONWithParams(url, params)  
-        return network.request(url, "POST", networkListener, params);
+    function jsonHandler:getJSONWithParams(url, params, listener)
+        network.request(url, "POST", listener, params); 
     end
     
-    function networkListener(event)
-        
-        if(event.isError) then
-            print("JSON load error!");
-        else
-            print("RESPONSE "..event.response);
-            strJson = event.response;
-        end
-    end
-    
-    return jsonHandler
+    return jsonHandler;
 end
 

@@ -35,14 +35,6 @@ end
 -- Called BEFORE scene has moved onscreen:
 function scene:willEnterScene( event )
         local group = self.view
-        local cJson = require("scripts.Utils.JSONHandler").new();
-        local cHome = require("scripts.home.HomeClass").new();
-        local json = require("json");
-        local body = "marketId=1&page=1&limit=5";
-        local teste = cJson:getJSONWithParams(LIST_PRODS,cJson:buildParams(body));
-        print(teste);
-        
-        cHome:buildCenario(cJson:getJSONWithParams(LIST_PRODS,cJson:buildParams(body)));
         -----------------------------------------------------------------------------
 
         --      This event requires build 2012.782 or later.
@@ -54,8 +46,28 @@ end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
-        local group = self.view
+        local group = self.view;
+        group:setReferencePoint(display.TopLeftReferencePoint);
+        group.x=0;
+        group.y=0;
+        local cJson = require("scripts.Utils.JSONHandler").new();
+        local cHome = require("scripts.home.HomeClass").new();
+        local json = require("json");
+        local body = "marketId=3";--Params para a requisição //Ex. "<var>=<value>&<var2>=<value2>&.."
+        local listProds;
         
+        --Entra quando JSON é carregado
+        local function loaded(event)
+            if(event.isError) then
+                print("JSON LOADING ERROR");
+            else
+                listProds= json.decode(event.response);
+                print(event.response);
+                cHome:buildCenario(listProds,group);  
+            end
+        end
+        
+        cJson:getJSONWithParams(LIST_ALL_PRODS_MK,cJson:buildParams(body),loaded);     
         -----------------------------------------------------------------------------
 
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
