@@ -21,7 +21,7 @@ local scene = storyboard.newScene();
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
-        
+        display.setStatusBar( display.HiddenStatusBar );
         -----------------------------------------------------------------------------
 
         --      CREATE display objects and add them to 'group' here.
