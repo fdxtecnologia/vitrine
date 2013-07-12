@@ -64,7 +64,7 @@ function scene:enterScene( event )
                 listProds= json.decode(event.response);
                 print(event.response);
                 local groupCarousel = display.newGroup();
-                groupCarousel = cHome:buildCenario(listProds, groupCarousel);
+                cHome:buildCenario(listProds, groupCarousel);
                 group:insert(groupCarousel);  
             end
         end

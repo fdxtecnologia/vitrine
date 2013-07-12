@@ -4,67 +4,35 @@ function new()
 	
 	local home = {};
 	
-	function home:buildCenario(listProds,groupCarousel)
-            groupCarousel:setReferencePoint(display.TopLeftReferencePoint);
-            groupCarousel.x=0;
-            groupCarousel.y=0;
-            for i=1,#listProds do
-                local thumb = display.newGroup();
-                thumb = home:createThumbProd(listProds[i],thumb);
-                groupCarousel:insert(thumb);
-                thumb = nil;
-            end
+	function home:buildCenario(listProds,parentGroup)
+            local gCarousel = display.newGroup();
+            gCarousel:setReferencePoint(display.TopLeftReferencePoint);
+            gCarousel.x=0;
+            gCarousel.y=0;
             
-            local teste = display.newGroup();
- 
-            teste = home:testeAdd(listProds[1],teste);
+            home:createThumbProd(listProds,gCarousel);
             
-            groupCarousel:insert(teste);
-          
-            return groupCarousel;
+--            local teste = display.newGroup();
+-- 
+--            teste = home:testeAdd(listProds[1],teste);
+--            
+--            groupCarousel:insert(teste);
+            parentGroup:insert(gCarousel);
         end 
         
-        function home:testeAdd(prod,teste)
-            local t2 = teste;
-            if(t2==nil)then
-                print("TESTE");
+        function home:createThumbProd(listProds,groupCarousel)
+            
+            local posX = display.contentWidth * 0.05;
+            local posY = display.contentHeight * 0.05;
+            
+            for i=1,#listProds do
+                local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",display.contentWidth*0.25,display.contentHeight*0.25,true);
+                image.x = posX;
+                image.y = posY;
+                posX = posX + display.contentWidth*0.05;
+                
             end
-            local image = display.newImageRect("images/produtos/"..prod.sku..".jpg",display.contentWidth*0.25,display.contentHeight*0.25,true);
-            t2:insert(image);
-            return t2;
         end
-        
-        function home:createThumbProd(prod,groupThumb)
-            groupThumb:setReferencePoint(display.CenterLeftReferencePoint);
-            groupThumb.x=0;
-            groupThumb.y=0;
-            local image = display.newImageRect("images/produtos/"..prod.sku..".jpg",display.contentWidth*0.25,display.contentHeight*0.25,true);
-            image:setReferencePoint(display.TopLeftReferencePoint);
-            image.x = 0;
-            image.y = 0;
-            groupThumb:insert(image);
-            return groupThumb;
-        end
-        
---        function home:createCarousel(group)
---            local WScreen = display.contentWidth;
---            local HScreen = display.contentHeight;
---            local groupCarousel = display.newGroup();
---            local thumb = display.newGroup();
---            local qtyRows = HScreen/groupCarousel[1].height;
---            local qtyCol = WScreen/groupCarousel[1].width;
---            local posX =0;
---            local posY =0;
---            
---            groupCarousel = group;
---            
---            for i=0,groupCarousel.numChildren do
---                thumb = groupCarousel[i];
---                thumb.x = posX;
---                thumb.y = posY;
---                posX = posX + WScreen*0.05;
---            end  
---        end
 	
 	return home;
 end
