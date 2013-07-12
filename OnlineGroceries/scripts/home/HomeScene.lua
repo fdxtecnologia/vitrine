@@ -47,9 +47,7 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
         local group = self.view;
-        group:setReferencePoint(display.CenterReferencePoint);
-        group.x=100;
-        group.y=100;
+        group:setReferencePoint(display.TopLeftReferencePoint);
         local cJson = require("scripts.Utils.JSONHandler").new();
         local cHome = require("scripts.home.HomeClass").new();
         local json = require("json");
@@ -62,10 +60,16 @@ function scene:enterScene( event )
                 print("JSON LOADING ERROR");
             else
                 listProds= json.decode(event.response);
+                local widget = require "widget";
+                local scrollView = widget.newScrollView{
+                   width = display.contentWidth,
+                   height = display.contentHeight,
+                   scrollWidth = display.contentWidth,
+                   scrollHeight = display.contentHeight
+                 };
                 print(event.response);
-                local groupCarousel = display.newGroup();
-                cHome:buildCenario(listProds, groupCarousel);
-                group:insert(groupCarousel);  
+                cHome:buildCenario(listProds, scrollView);
+                group:insert(scrollView.view);
             end
         end
         
