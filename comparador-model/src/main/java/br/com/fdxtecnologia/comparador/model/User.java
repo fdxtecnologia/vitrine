@@ -79,7 +79,7 @@ public class User implements Serializable {
     public void setUserRole(Role userRole) {
         this.userRole = userRole;
     }
-    
+
 
     public void setLastAccess(Date lastAccess) {
         this.lastAccess = lastAccess;
@@ -87,7 +87,7 @@ public class User implements Serializable {
 
     public boolean isEnable() {
         return enable;
-    }
+}
 
     public void setEnable(boolean enable) {
         this.enable = enable;
