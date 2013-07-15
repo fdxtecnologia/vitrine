@@ -51,7 +51,7 @@ function scene:enterScene( event )
         local cJson = require("scripts.Utils.JSONHandler").new();
         local cHome = require("scripts.home.HomeClass").new();
         local json = require("json");
-        local body = "marketId=1";--Params para a requisição //Ex. "<var>=<value>&<var2>=<value2>&.."
+        local body = "marketId=3";--Params para a requisição //Ex. "<var>=<value>&<var2>=<value2>&.."
         local listProds;
         
         --Entra quando JSON é carregado

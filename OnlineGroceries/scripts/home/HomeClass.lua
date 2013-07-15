@@ -56,8 +56,8 @@ function new()
 
         function home:createThumbProd(listProds,scrollView)
             
-            local posX = display.contentWidth * 0.05;
-            local posY = display.contentHeight * 0.05;
+            local posX = display.contentWidth * 0.0;
+            local posY = display.contentHeight * 0.0;
             local qtyCol = 1;
             local qtyRows = 0;
             local scaleX = 1;
@@ -72,10 +72,10 @@ function new()
                 image.y = posY;
                 image.xScale = scaleX;
                 image.yScale = scaleY;
---                if(qtyRows==0)then
---                    scaleX = scaleX - 0.05;
---                    scaleY = scaleY - 0.05;
---                end
+                if(qtyRows==0)then
+                    scaleX = scaleX * 0.7;
+                    scaleY = scaleY * 0.7;
+                end
                 function image:touch(event)
                     if(event.phase=="began")then
                         print("TOUCH BEGAN");
@@ -116,7 +116,7 @@ function new()
                 else
                     if(qtyRows == qtdMaxRow) then
                         qtyRows = 0;
-                        posX = posX + display.contentWidth*0.05 + image.width*scaleX;
+                        posX = posX + image.width*scaleX;
                         posY = display.contentHeight * 0.05;                        
                     end
                 end              

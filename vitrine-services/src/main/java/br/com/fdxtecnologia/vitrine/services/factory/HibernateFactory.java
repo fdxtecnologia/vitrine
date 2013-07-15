@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.stat.Statistics;
 
 /**
  *
@@ -36,5 +37,12 @@ public class HibernateFactory {
         } catch (HibernateException e) {
             throw new HibernateException("Erro ao obter uma session a partir da SessionFactory: ", e);
         }
+    }
+
+    public static Statistics getStatistics() {
+        if (!getSessionFactory().getStatistics().isStatisticsEnabled()) {
+            getSessionFactory().getStatistics().setStatisticsEnabled(true);
+        }
+        return getSessionFactory().getStatistics();
     }
 }
