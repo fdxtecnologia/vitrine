@@ -1,4 +1,5 @@
 module(...,package.seeall);
+system.activate("multitouch");
 
 function new()
 	
@@ -51,8 +52,8 @@ function new()
             
             home:createThumbProd(listProds,scrollView);
             parentGroup:insert(scrollView.view);
-        end 
-        
+        end   
+
         function home:createThumbProd(listProds,scrollView)
             
             local posX = display.contentWidth * 0.05;
@@ -63,6 +64,7 @@ function new()
             local scaleY = 1;
             local qtdMaxRow = 0;
             local isFirstTime = true;
+            
             for i=1,#listProds do
                 local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",display.contentWidth*0.25,display.contentHeight*0.25,true);
                 image:setReferencePoint(display.TopLeftReferencePoint);
@@ -70,10 +72,35 @@ function new()
                 image.y = posY;
                 image.xScale = scaleX;
                 image.yScale = scaleY;
-                if(qtyRows==0)then
-                    scaleX = scaleX - 0.05;
-                    scaleY = scaleY - 0.05;
+--                if(qtyRows==0)then
+--                    scaleX = scaleX - 0.05;
+--                    scaleY = scaleY - 0.05;
+--                end
+                function image:touch(event)
+                    if(event.phase=="began")then
+                        print("TOUCH BEGAN");
+                        display.getCurrentStage():setFocus(self);
+                        self.markX = self.x;
+                        self.markY = self.y;
+                        self.isFocus = true;
+                        self:toFront();
+                    elseif self.isFocus then
+                        if(event.phase=="moved")then
+                            local x = (event.x - event.xStart) + self.markX;
+                            local y = (event.y - event.yStart) + self.markY;
+                            self.x, self.y = x,y;
+                            print("DRAG");
+                        end
+                        if(event.phase=="ended")then
+                            self.x = self.markX;
+                            self.y = self.markY;
+                            display.getCurrentStage():setFocus(nil); 
+                            self.isFocus = nil;
+                        end
+                    end
+                    return true;
                 end
+                image:addEventListener("touch", image);
                 scrollView:insert(image);
                 posY = posY + display.contentHeight*0.05 + image.height*scaleY;
                 qtyRows = qtyRows + 1;
@@ -92,7 +119,7 @@ function new()
                         posX = posX + display.contentWidth*0.05 + image.width*scaleX;
                         posY = display.contentHeight * 0.05;                        
                     end
-                end
+                end              
             end
         end
         
