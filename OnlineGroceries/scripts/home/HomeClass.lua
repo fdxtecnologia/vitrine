@@ -4,13 +4,6 @@ function new()
 	
 	local home = {};
         
-        function home:newCenario(listProds,parentGroup)
-            
-            local carouselGroup = display.newGroup;
-            
-            
-        end
-        
 	function home:buildCenario(listProds,parentGroup)
             
             local function scrolling(event)
@@ -20,13 +13,15 @@ function new()
                 local scroll = event.target;
                 local x,y = scroll:getContentPosition();
                 
+                
                 if("began" == phase)then
                     print("began");
                 elseif("moved" == phase)then
-                    print("CONTENT POSITION :"..scroll.qtyCols);
-                    print("WIDTH: "..scroll._view.width)
-                    scroll._view.xScale=1+((((x)+display.contentWidth*0.05)/scroll._view.width)*-1);
-                    scroll._view.yScale=1+((((x)+display.contentWidth*0.05)/scroll._view.width)*-1);
+                    print("WIDTH: "..display.contentWidth*0.05);
+                    local posX = (scroll.width)/scroll.qtyCols;
+                    print("posX: "..posX);
+                    scroll._view.xScale=1+((((x)+display.contentWidth*0.05)/scroll.initWidth)*-1);
+                    scroll._view.yScale=1+((((x)+display.contentWidth*0.05)/scroll.initWidth)*-1);
                 elseif("ended" == phase)then
                     print("Ended");
                 end
@@ -116,6 +111,7 @@ function new()
                         qtdMaxRow = qtyRows;
                         qtyRows = 0;
                         posX = posX + display.contentWidth*0.05 + image.width*scaleX;
+                        print("position X"..posX);
                         posY = display.contentHeight * 0.05;
                         isFirstTime = false;
                     end
@@ -124,11 +120,15 @@ function new()
                         qtyRows = 0;
                         qtyCol = qtyCol +1;
                         posX = posX + display.contentWidth*0.05 + image.width*scaleX;
+                        print("position X"..posX);
                         posY = display.contentHeight * 0.05;                        
                     end
                 end              
             end
             scrollView.qtyCols = qtyCol;
+            scrollView.qtyRows = qtdMaxRow;
+            scrollView.initWidth = scrollView._view.width;
+            scrollView.initHeight = scrollView._view.height;
         end
         
     return home;
