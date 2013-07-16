@@ -1,9 +1,15 @@
 module(...,package.seeall);
-system.activate("multitouch");
 
 function new()
 	
 	local home = {};
+        
+        function home:newCenario(listProds,parentGroup)
+            
+            local carouselGroup = display.newGroup;
+            
+            
+        end
         
 	function home:buildCenario(listProds,parentGroup)
             
@@ -11,16 +17,16 @@ function new()
                 
                 local phase = event.phase;
                 local direction = event.direction;
-                local scaleX = 1;
-                local scaleY = 1;
+                local scroll = event.target;
+                local x,y = scroll:getContentPosition();
                 
                 if("began" == phase)then
                     print("began");
                 elseif("moved" == phase)then
-                    print("Moved");
-
-                    scaleX = scaleX + 0.05;
-                    scaleY = scaleY + 0.05;
+                    print("CONTENT POSITION :"..x);
+                    print("WIDTH: "..scroll._view.width)
+                    scroll._view.xScale=1+(((x+display.contentWidth*0.05)/scroll._view.width)*-1);
+                    scroll._view.yScale=1+(((x+display.contentWidth*0.05)/scroll._view.width)*-1);
                 elseif("ended" == phase)then
                     print("Ended");
                 end
@@ -47,12 +53,12 @@ function new()
                    scrollWidth = display.contentWidth,
                    scrollHeight = display.contentHeight,
                    verticalScrollDisabled = true,
+                   friction = 0,
                    listener = scrolling
-            };        
-            
+            };            
             home:createThumbProd(listProds,scrollView);
             parentGroup:insert(scrollView.view);
-        end   
+        end
 
         function home:createThumbProd(listProds,scrollView)
             
@@ -72,10 +78,10 @@ function new()
                 image.y = posY;
                 image.xScale = scaleX;
                 image.yScale = scaleY;
---                if(qtyRows==0)then
---                    scaleX = scaleX - 0.05;
---                    scaleY = scaleY - 0.05;
---                end
+                if(qtyRows==0)then
+                    scaleX = scaleX - 0.05;
+                    scaleY = scaleY - 0.05;
+                end
                 function image:touch(event)
                     if(event.phase=="began")then
                         print("TOUCH BEGAN");
