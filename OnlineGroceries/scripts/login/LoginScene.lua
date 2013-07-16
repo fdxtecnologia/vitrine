@@ -46,11 +46,9 @@ end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
-        -----------------------------------------------------------------------------
-
-        --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
-
-        -----------------------------------------------------------------------------
+        local cLogin = require("scripts.login.LoginClass").new();
+        local group = self.view
+        cLogin:buildForm(group);
 
 end
 

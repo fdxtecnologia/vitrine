@@ -46,7 +46,6 @@ function new()
                    height = display.contentHeight,
                    scrollWidth = display.contentWidth,
                    scrollHeight = display.contentHeight,
-                   verticalScrollDisabled = true,
                    listener = scrolling
             };        
             
@@ -56,26 +55,29 @@ function new()
 
         function home:createThumbProd(listProds,scrollView)
             
-            local posX = display.contentWidth * 0.0;
-            local posY = display.contentHeight * 0.0;
+            local posX = 40;
+            local posY = 40;
             local qtyCol = 1;
             local qtyRows = 0;
             local scaleX = 1;
             local scaleY = 1;
             local qtdMaxRow = 0;
             local isFirstTime = true;
+            local sizeImage = 80;
             
             for i=1,#listProds do
-                local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",display.contentWidth*0.25,display.contentHeight*0.25,true);
-                image:setReferencePoint(display.TopLeftReferencePoint);
+                local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
+                image:setReferencePoint(display.CenterReferencePoint);
                 image.x = posX;
                 image.y = posY;
                 image.xScale = scaleX;
                 image.yScale = scaleY;
-                if(qtyRows==0)then
-                    scaleX = scaleX * 0.7;
-                    scaleY = scaleY * 0.7;
-                end
+                
+                --if(qtyCol > 0)then
+                    --scaleX = scaleX * 0.7;
+                    --scaleY = scaleY * 0.7;
+                --end
+                
                 function image:touch(event)
                     if(event.phase=="began")then
                         print("TOUCH BEGAN");
@@ -102,25 +104,37 @@ function new()
                 end
                 image:addEventListener("touch", image);
                 scrollView:insert(image);
-                posY = posY + display.contentHeight*0.05 + image.height*scaleY;
+                --posY = posY + display.contentHeight*0.05 + image.height*scaleY;
                 qtyRows = qtyRows + 1;
-                if(isFirstTime==true)then
-                    if((posY+image.height) >= display.contentHeight) then
-                        qtdCol = qtyCol +1;
-                        qtdMaxRow = qtyRows;
-                        qtyRows = 0;
-                        posX = posX + display.contentWidth*0.05 + image.width*scaleX;
-                        posY = display.contentHeight * 0.05;
-                        isFirstTime = false;
-                    end
-                else
-                    if(qtyRows == qtdMaxRow) then
-                        qtyRows = 0;
-                        posX = posX + image.width*scaleX;
-                        posY = display.contentHeight * 0.05;                        
-                    end
-                end              
-            end
+                posY = (80 * qtyRows) + 40;
+                
+                if(qtyRows >= 3) then
+                    qtyCol = qtyCol + 1;
+                    qtyRows = 0;
+                    posX = posX + 80 * (0.8 ^ qtyCol);
+                    posY = 40;
+                    scaleX = scaleX * (0.97 ^ qtyCol);
+                    scaleY = scaleY * (0.97 ^ qtyCol);
+                end
+                
+--                if(isFirstTime==true)then
+--                    if((posY+image.height) >= display.contentHeight) then
+--                        qtdCol = qtyCol +1;
+--                        qtdMaxRow = qtyRows;
+--                        qtyRows = 0;
+--                        posX = posX + display.contentWidth*0.05 + image.width*scaleX;
+--                        posY = display.contentHeight * 0.05;
+--                        isFirstTime = false;
+--                    end
+--                else
+--                    if(qtyRows == qtdMaxRow) then
+--                        qtyRows = 0;
+--                        posX = posX + image.width*scaleX;
+--                        posY = display.contentHeight * 0.05;                        
+--                    end
+--                end
+                
+            end            
         end
         
     return home;
