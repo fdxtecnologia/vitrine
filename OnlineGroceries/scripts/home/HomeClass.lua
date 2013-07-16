@@ -11,17 +11,15 @@ function new()
                 local phase = event.phase;
                 local direction = event.direction;
                 local scroll = event.target;
-                local x,y = scroll:getContentPosition();
-                
                 
                 if("began" == phase)then
                     print("began");
                 elseif("moved" == phase)then
-                    print("WIDTH: "..display.contentWidth*0.05);
-                    local posX = (scroll.width)/scroll.qtyCols;
-                    print("posX: "..posX);
-                    scroll._view.xScale=1+((((x)+display.contentWidth*0.05)/scroll.initWidth)*-1);
-                    scroll._view.yScale=1+((((x)+display.contentWidth*0.05)/scroll.initWidth)*-1);
+                    local x,y = scroll:getContentPosition(); 
+                    print("posX: "..(((x)/scroll.initWidth)*-1));
+                    scroll._view.xScale=1+((((x)/scroll.initWidth)*-1)*(1-(scroll.qtyCols*0.05)));
+                    --scroll.width = scroll.width * scroll._view.xScale;
+                    scroll._view.yScale=1+((((x)/scroll.initWidth)*-1)*(1-(scroll.qtyCols*0.05)));
                 elseif("ended" == phase)then
                     print("Ended");
                 end
@@ -45,9 +43,8 @@ function new()
             local scrollView = widget.newScrollView{
                    width = display.contentWidth,
                    height = display.contentHeight,
-                   scrollWidth = display.contentWidth,
-                   scrollHeight = display.contentHeight,
                    verticalScrollDisabled = true,
+                   leftPadding = display.contentWidth *0.05,
                    friction = 0,
                    listener = scrolling
             };            
@@ -121,10 +118,12 @@ function new()
                         qtyCol = qtyCol +1;
                         posX = posX + display.contentWidth*0.05 + image.width*scaleX;
                         print("position X"..posX);
-                        posY = display.contentHeight * 0.05;                        
+                        posY = display.contentHeight * 0.05;
                     end
                 end              
             end
+            scrollView.initX = display.contentWidth *0.05;
+            scrollView.initY = display.contentHeight *0.05;
             scrollView.qtyCols = qtyCol;
             scrollView.qtyRows = qtdMaxRow;
             scrollView.initWidth = scrollView._view.width;
