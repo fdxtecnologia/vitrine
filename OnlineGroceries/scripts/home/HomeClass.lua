@@ -18,7 +18,7 @@ function new()
                     local x,y = scroll:getContentPosition(); 
                     print("posX: "..(((x)/scroll.initWidth)*-1));
                     scroll._view.xScale=1+((((x)/scroll.initWidth)*-1)*(1-(scroll.qtyCols*0.05)));
-                    --scroll.width = scroll.width * scroll._view.xScale;
+                    --scroll._view.width = scroll._view.width * scroll._view.xScale;
                     scroll._view.yScale=1+((((x)/scroll.initWidth)*-1)*(1-(scroll.qtyCols*0.05)));
                 elseif("ended" == phase)then
                     print("Ended");
@@ -44,8 +44,9 @@ function new()
                    width = display.contentWidth,
                    height = display.contentHeight,
                    verticalScrollDisabled = true,
-                   leftPadding = display.contentWidth *0.05,
-                   friction = 0,
+                   hideBackground = true,
+                   rightPadding = 1000,
+                   friction = 0.0,
                    listener = scrolling
             };            
             home:createThumbProd(listProds,scrollView);
