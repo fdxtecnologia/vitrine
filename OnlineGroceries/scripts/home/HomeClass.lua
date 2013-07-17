@@ -2,141 +2,145 @@ module(...,package.seeall);
 system.activate("multitouch");
 
 function new()
-	
-	local home = {};
+    
+    local home = {};
+    
+    function home:buildCenario(listProds,parentGroup)
+        --Taxa de incremento da escala
+        local t3 = 0.95;
         
-	function home:buildCenario(listProds,parentGroup)
+        local function scrolling(event)
             
-            local function scrolling(event)
-                
-                local phase = event.phase;
-                local direction = event.direction;
-                local scaleX = 1;
-                local scaleY = 1;
-                
-                if("began" == phase)then
-                    print("began");
-                elseif("moved" == phase)then
-                    print("Moved");
-
-                    scaleX = scaleX + 0.05;
-                    scaleY = scaleY + 0.05;
-                elseif("ended" == phase)then
-                    print("Ended");
+            local phase = event.phase;
+            local direction = event.direction;
+            local scroll = event.target;
+            
+            local a,b,e,f
+       
+            --Atribuições
+            a = display.contentHeight * 0.1
+            b = display.contentHeight * 0.35
+            e = display.contentHeight * 0.05
+            f = display.contentHeight * 0.1
+                       
+            
+--            if "moved" == phase then
+--                local x,y = scroll:getContentPosition();
+--                scroll._view.xScale= (-((((e - a + b - f) / scroll.initWidth) * x) + (a - b)))/100
+--                scroll._view.yScale= (-((((e - a + b - f) / scroll.initWidth) * x) + (a - b)))/100
+--                ---scroll._view.width = scroll._view.width * scroll._view.xScale;
+--            end
+            
+            
+            
+            if("moved" == phase)then
+                local x,y = scroll:getContentPosition(); 
+                scroll._view.xScale=1+((x*t3)/scroll.initWidth)*(-1)
+                scroll._view.yScale=1+((x*t3)/scroll.initWidth)*(-1)
+                --scroll._view.width = scroll._view.width * scroll._view.xScale;
+            elseif ("ended" == phase) then
+                if event.limitReached then
+                    scroll._view.width = scroll._view.width
+                    print(scroll._view.width)
                 end
-                
-                if(event.limitReached)then
-                    if("up" == direction)then
-                        print("Reached on Top");
-                    elseif("down" == direction)then
-                        print("Reached on Bottom");
-                    elseif("left" == direction)then
-                        print("Reached on Left");
-                    elseif("right" == direction)then
-                        print("Reached on Right");
-                    end
-                end
-                
-                return true;
             end
-            
-            local widget = require "widget";
-            local scrollView = widget.newScrollView{
-                   width = display.contentWidth,
-                   height = display.contentHeight,
-                   scrollWidth = display.contentWidth,
-                   scrollHeight = display.contentHeight,
-                   listener = scrolling
-            };        
-            
-            home:createThumbProd(listProds,scrollView);
-            parentGroup:insert(scrollView.view);
-        end   
-
-        function home:createThumbProd(listProds,scrollView)
-            
-            local posX = 40;
-            local posY = 40;
-            local qtyCol = 1;
-            local qtyRows = 0;
-            local scaleX = 1;
-            local scaleY = 1;
-            local qtdMaxRow = 0;
-            local isFirstTime = true;
-            local sizeImage = 80;
-            
-            for i=1,#listProds do
-                local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
-                image:setReferencePoint(display.CenterReferencePoint);
-                image.x = posX;
-                image.y = posY;
-                image.xScale = scaleX;
-                image.yScale = scaleY;
-                
-                --if(qtyCol > 0)then
-                    --scaleX = scaleX * 0.7;
-                    --scaleY = scaleY * 0.7;
-                --end
-                
-                function image:touch(event)
-                    if(event.phase=="began")then
-                        print("TOUCH BEGAN");
-                        display.getCurrentStage():setFocus(self);
-                        self.markX = self.x;
-                        self.markY = self.y;
-                        self.isFocus = true;
-                        self:toFront();
-                    elseif self.isFocus then
-                        if(event.phase=="moved")then
-                            local x = (event.x - event.xStart) + self.markX;
-                            local y = (event.y - event.yStart) + self.markY;
-                            self.x, self.y = x,y;
-                            print("DRAG");
-                        end
-                        if(event.phase=="ended")then
-                            self.x = self.markX;
-                            self.y = self.markY;
-                            display.getCurrentStage():setFocus(nil); 
-                            self.isFocus = nil;
-                        end
-                    end
-                    return true;
-                end
-                image:addEventListener("touch", image);
-                scrollView:insert(image);
-                --posY = posY + display.contentHeight*0.05 + image.height*scaleY;
-                qtyRows = qtyRows + 1;
-                posY = (80 * qtyRows) + 40;
-                
-                if(qtyRows >= 3) then
-                    qtyCol = qtyCol + 1;
-                    qtyRows = 0;
-                    posX = posX + 80 * (0.8 ^ qtyCol);
-                    posY = 40;
-                    scaleX = scaleX * (0.97 ^ qtyCol);
-                    scaleY = scaleY * (0.97 ^ qtyCol);
-                end
-                
---                if(isFirstTime==true)then
---                    if((posY+image.height) >= display.contentHeight) then
---                        qtdCol = qtyCol +1;
---                        qtdMaxRow = qtyRows;
---                        qtyRows = 0;
---                        posX = posX + display.contentWidth*0.05 + image.width*scaleX;
---                        posY = display.contentHeight * 0.05;
---                        isFirstTime = false;
---                    end
---                else
---                    if(qtyRows == qtdMaxRow) then
---                        qtyRows = 0;
---                        posX = posX + image.width*scaleX;
---                        posY = display.contentHeight * 0.05;                        
---                    end
---                end
-                
-            end            
+            return true;
         end
         
+        local widget = require "widget";
+        local scrollView = widget.newScrollView{
+            width = display.contentWidth,
+            height = display.contentHeight,
+            scrollWidth = display.contentWidth,
+            scrollHeight = display.contentHeight,
+            listener = scrolling,
+            verticalScrollDisabled = true
+        };        
+        
+        home:createThumbProd(listProds,scrollView);
+        parentGroup:insert(scrollView.view);
+    end   
+    
+    function home:createThumbProd(listProds,scrollView)
+        
+        --COMEÇANDO
+        local sizeImage = 100;
+        local a,b,c,d,e,f,g,h,t2,x
+        local t1, t2
+        local yA, yB, yC
+        local scala1, scalaP
+        
+        --Atribuições
+        a = display.contentHeight * 0.1
+        b = display.contentHeight * 0.35
+        c = display.contentHeight * 0.6
+        d = display.contentHeight * 0.85
+        e = display.contentHeight * 0.05
+        f = display.contentHeight * 0.1
+        g = display.contentHeight * 0.15
+        h = display.contentHeight * 0.2
+        x = 0
+        
+        --T1 Multiplica a escala
+        t1 = 1
+        scala1 =   -((((e - a + b - f) / display.contentWidth) * x) + (a - b))
+        x = scala1 * 0.6;
+        -- T2 multiplica o passo de X
+        t2 = 0.9
+        -- 
+        local i = 1
+        while i < #listProds do
+            local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
+            yA = (((((e+f)/2) - ((a+b)/2)) / display.contentWidth) * x) + (( a + b)/2)
+            scala1 =  - ((((e - a + b - f) / display.contentWidth) * x) + (a - b))
+            image.x = x
+            image.y = yA
+            image.xScale = (scala1 * t1) / 100
+            image.yScale = (scala1 * t1) / 100
+            if(scala1 > 0) then
+                scrollView:insert(image);
+            end
+                
+            i = i + 1
+            
+            local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
+            yB = (((((f + g)/2) - ((b + c)/2)) / display.contentWidth) * x) + ((b + c)/2)
+            scala1 =  - ((((e - a + b - f) / display.contentWidth) * x) + (a - b))
+            image.x = x
+            image.y = yB
+            image.xScale = (scala1 * t1) / 100
+            image.yScale = (scala1 * t1) / 100
+            if(scala1 > 0) then
+                scrollView:insert(image);
+            end
+            i = i + 1
+            
+            local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
+            yC = (((((g+h)/2) - ((c+d)/2)) / display.contentWidth) * x) + ((c + d)/2)
+            scala1 =  - ((((e - a + b - f) / display.contentWidth) * x) + (a - b))
+            image.x = x
+            image.y = yC
+            image.xScale = (scala1 * t1) / 100
+            image.yScale = (scala1 * t1) / 100
+            if(scala1 > 0) then
+                scrollView:insert(image);
+            end
+            i = i + 1
+            --incrementando x
+            x = x + (scala1 * t2)
+        end
+        
+        scrollView.initX = display.contentWidth *0.05;
+        scrollView.initY = display.contentHeight *0.05;
+        scrollView.qtyCols = qtyCol;
+        scrollView.qtyRows = qtdMaxRow;
+        scrollView.initWidth = scrollView._view.width;
+        scrollView.initHeight = scrollView._view.height;
+
+        
+        
+    end
+    
     return home;
 end
 
