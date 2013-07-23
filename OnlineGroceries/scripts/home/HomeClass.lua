@@ -50,22 +50,22 @@ function new()
         if event.phase == "began" then
             print("TOUCH");
             self.startX= event.x
-            --self.startY= event.y
             display.getCurrentStage():setFocus(self)
         elseif event.phase == "moved" then
             local movedX = event.x - self.startX
-            --local movedY = event.y - self.startY
             print(movedX, movedY)
             self.x = self.x + movedX
-            --self.y = self.y + movedY
             self.startX = event.x
-            --self.startY = event.y
+            local group = self.colunas[1];
+            print("Coluna 1:",group[1]);
+            self.xScale = 1+((self.x)*(-1))/display.contentWidth;
+            self.yScale = 1+((self.x)*(-1))/display.contentWidth;
         elseif event.phase == "ended" then
-                display.getCurrentStage():setFocus(nil)
+            display.getCurrentStage():setFocus(nil)
         end             
     end
     
-    --Construção do carrinho
+    --Construção do cenario
     function home:buildCenario(listProds,parentGroup)
         --Taxa de incremento da escala
         local t3 = 0.95;
@@ -222,9 +222,10 @@ function new()
         t2 = 0.9
         -- 
         local i = 1
-
+        local numColunas = 1;
+        local colunas={};
         while i <=#listProds do
-                
+            local group = display.newGroup();
             local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
             yA = (((((e+f)/2) - ((a+b)/2)) / display.contentWidth) * x) + (( a + b)/2)
             scala1 =  - ((((e - a + b - f) / display.contentWidth) * x) + (a - b))
@@ -233,9 +234,10 @@ function new()
             image.xScale = (scala1 * t1) / 100
             image.yScale = (scala1 * t1) / 100
             if(scala1 > 0) then
-                scrollView:insert(image);
+                group:insert(image);
+                --scrollView:insert(image);
                 image.touch = onDragAndDropImage;
-                image:addEventListener("touch", image);
+                --image:addEventListener("touch", image);
                 image.product = listProds[i];
             end
                       
@@ -250,9 +252,10 @@ function new()
                 image.xScale = (scala1 * t1) / 100
                 image.yScale = (scala1 * t1) / 100
                 if(scala1 > 0) then
-                    scrollView:insert(image);
+                    group:insert(image);
+                    --scrollView:insert(image);
                     image.touch = onDragAndDropImage;
-                    image:addEventListener("touch", image);
+                    --image:addEventListener("touch", image);
                     image.product = listProds[i];
                 end
                 i = i + 1
@@ -266,17 +269,22 @@ function new()
                     image.xScale = (scala1 * t1) / 100
                     image.yScale = (scala1 * t1) / 100
                     if(scala1 > 0) then
-                        scrollView:insert(image);
+                        group:insert(image);
+                        --scrollView:insert(image);
                         image.touch = onDragAndDropImage;
-                        image:addEventListener("touch", image);
+                        --image:addEventListener("touch", image);
                         image.product = listProds[i];
                     end
                     i = i + 1
                 end
             end
+            table.insert(colunas,group);
+            scrollView:insert(colunas[numColunas]);
+            numColunas=numColunas+1;
             --incrementando x
             x = x + (scala1 * t2)
         end
+        scrollView.colunas = colunas;
         scrollView.x = 0;
         scrollView.y = 0;
 --        scrollView.initX = display.contentWidth *0.05;
