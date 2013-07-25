@@ -4,30 +4,34 @@ function new()
     local login = {};
     
     function login:buildForm(parentGroup)
-        display.setStatusBar( display.DefaultStatusBar )
+        display.setStatusBar( display.HiddenStatusBar )
         
-        local widget = require "widget"
-        local sbHeight = display.statusBarHeight
-        local tbHeight = 44
-        local top = sbHeight + tbHeight
+        local formGroup = display.newGroup();
+        
+--        local widget = require "widget"
+--        local sbHeight = display.statusBarHeight
+--        local tbHeight = 44
+--        local top = sbHeight + tbHeight
         
         -- forward declarations
         local titleField, noteText, loadSavedNote, saveNote
-        
         local textFont = native.newFont( native.systemFont )
-        local currentTop = sbHeight+tbHeight+10
-        local padding = 10
         
-        -- create textField
-        titleField = native.newTextField( padding, sbHeight+tbHeight+10, display.contentWidth-(padding*2), 28 )
-        titleField.font = textFont
-        titleField.size = 14
+        local lblLogin = display.newText(formGroup, "Login", display.contentWidth*0.5-display.contentWidth*0.1, display.contentHeight*0.1, display.contentWidth*0.2, display.contentHeight*0.2, textFont, 23);
+        
+        local userField = native.newTextField(display.contentWidth*0.5-((display.contentWidth*0.33)/2), display.contentHeight*0.3, display.contentWidth*0.33, 23, listener);
+        
+        local passField = native.newTextField(display.contentWidth*0.5-((display.contentWidth*0.33)/2), display.contentHeight*0.4, display.contentWidth*0.33, 23, listener);
         
         
+        
+        formGroup:insert(userField);
+        formGroup:insert(passField);
     end
     
     function login:authenticate(user, password)
         
     end
+    
     return login
 end

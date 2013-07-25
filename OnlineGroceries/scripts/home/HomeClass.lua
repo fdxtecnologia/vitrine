@@ -145,7 +145,8 @@ function new()
      -- Drag and Drop dos items
     local function onDragAndDropImage(self,event)
         
-        local gCarousel = self.parent;
+        local gCol = self.parent;
+        local gCarousel = gCol.parent;
         local parentGroup = gCarousel.parent;      
         local gCart = parentGroup.gCart;
     
@@ -237,7 +238,7 @@ function new()
                 group:insert(image);
                 --scrollView:insert(image);
                 image.touch = onDragAndDropImage;
-                --image:addEventListener("touch", image);
+                image:addEventListener("touch", image);
                 image.product = listProds[i];
             end
                       
@@ -255,7 +256,7 @@ function new()
                     group:insert(image);
                     --scrollView:insert(image);
                     image.touch = onDragAndDropImage;
-                    --image:addEventListener("touch", image);
+                    image:addEventListener("touch", image);
                     image.product = listProds[i];
                 end
                 i = i + 1
@@ -272,7 +273,7 @@ function new()
                         group:insert(image);
                         --scrollView:insert(image);
                         image.touch = onDragAndDropImage;
-                        --image:addEventListener("touch", image);
+                        image:addEventListener("touch", image);
                         image.product = listProds[i];
                     end
                     i = i + 1
