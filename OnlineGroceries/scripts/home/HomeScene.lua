@@ -50,21 +50,36 @@ function scene:enterScene( event )
         local cJson = require("scripts.Utils.JSONHandler").new();
         local cHome = require("scripts.home.HomeClass").new();
         local json = require("json");
-        local body = "marketId=1";--Params para a requisição //Ex. "<var>=<value>&<var2>=<value2>&.."
+        local body = "marketId=3";--Params para a requisição //Ex. "<var>=<value>&<var2>=<value2>&.."
         local listProds;
         
-        --Entra quando JSON é carregado
-        local function loaded(event)
-            if(event.isError) then
-                print("JSON LOADING ERROR");
-            else
-                listProds= json.decode(event.response);
-                print(event.response);
-                cHome:buildCenario(listProds, group);
-            end
+        local path = system.pathForFile( "products.json")
+
+        local file = io.open( path, "r" )
+
+        local jsonStr
+        for line in file:lines() do
+            jsonStr = line
         end
         
-        cJson:getJSONWithParams(LIST_ALL_PRODS_MK,cJson:buildParams(body),loaded);     
+        
+        listProds= json.decode(jsonStr);
+        cHome:buildCenario(listProds, group);
+        
+        
+        
+--        --Entra quando JSON é carregado
+--        local function loaded(event)
+--            if(event.isError) then
+--                print("JSON LOADING ERROR");
+--            else
+--                listProds= json.decode(event.response);
+--                print(event.response);
+--                cHome:buildCenario(listProds, group);
+--            end
+--        end
+--        a
+--        cJson:getJSONWithParams(LIST_ALL_PRODS_MK,cJson:buildParams(body),loaded);     
         -----------------------------------------------------------------------------
 
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
