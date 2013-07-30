@@ -4,48 +4,44 @@ system.activate("multitouch");
 function new()
     
     local home = {};
-    local cart = {};
     
-    -- Evento que trata a aba do carrinh e adiciona items ao gCart.cart={}
-    local function prod_listener(self,event)
+    local function onDragGCart(self,event)
+        local phase = event.phase;
         
-        if(event.type == "selected")then
-            transition.to(self, {time = 100, y=self.y-display.contentHeight*0.2});
-        elseif(event.type == "added")then
-            local product = event.product;
-            local isRepeated = false;
-            transition.to(self, {time = 100, y=self.y+display.contentHeight*0.2});
-            print("Cart: ",cart);
-            for i=1,#self.cart.products do
-                if(self.cart.products[i].idProduct == product.idProduct)then
-                    isRepeated = true;
-                    self.cart.products[i].quantity = self.cart.products[i].quantity + 1;
-                    self.cart.products[i].totalPrice = product.price * self.cart.products[i].quantity;
+        if event.phase == "began" then
+            self.startX = self.x;
+            self.startY = self.y;
+            self.initPosY = self.y;
+            self:toFront();
+            display.getCurrentStage():setFocus(self)
+        elseif phase == "moved" then
+            movedY = event.y - self.startY;
+            self.y = self.y + movedY;
+            self.startY = event.y;
+        elseif phase == "ended" then
+                if(self.y <= display.contentHeight*0.5)then
+                    self.y = 0;
+                else
+                    self.y = display.contentHeight;
+                    self:toBack();
                 end
-            end
-            if(isRepeated==false)then
-                product.quantity = product.quantity +1;
-                product.totalPrice = product.price;
-                table.insert(self.cart.products, product);
-            end
-            cart = self.cart;
-            local list = "";
-            for j=1,#self.cart.products do
-                list = list.."Produto:"..self.cart.products[j].title.." Quantidade:"..self.cart.products[j].quantity.." Preço:"..self.cart.products[j].totalPrice.."\n";
-            end
-            if(self.textProduct == nil)then
-                self.textProduct = display.newText(list, 0, self.listProdY,display.contentWidth,0, native.systemFont, 14);
-            else
-                self:remove(self.textProduct);
-                self.textProduct = display.newText(list, 0, self.listProdY,display.contentWidth,0, native.systemFont, 14);
-            end
-            self:insert(self.textProduct);
-        elseif(event.type == "release")then
-            transition.to(self, {time = 100, y=self.y+display.contentHeight*0.2});
+            display.getCurrentStage():setFocus(nil);
         end
     end
     
-    -- Drag and Drop no carrinho 
+    -- Evento que trata a aba do carrinho
+    local function prod_listener(self,event)
+        if(event.type == "selected")then
+            transition.to(self, {time = 100, y=self.y-display.contentHeight*0.1});
+        elseif(event.type == "added")then
+            self:addToList(event.product);
+            transition.to(self, {time = 100, y=self.y+display.contentHeight*0.1});
+        elseif(event.type == "release")then
+            transition.to(self, {time = 100, y=self.y+display.contentHeight*0.1});
+        end
+    end
+    
+    -- Move carousel
     local function onTouch(self, event)
         if event.phase == "began" then
             print("TOUCH");
@@ -70,61 +66,9 @@ function new()
         --Taxa de incremento da escala
         local t3 = 0.95;
         
-        local gCart = display.newGroup();
-        gCart.x = 0;
-        gCart.y = display.contentHeight;
-        local bgCart = display.newRect(gCart, 0, 0, display.contentWidth, display.contentHeight);
-        bgCart:setFillColor(125, 125, 125,255);       
+        local gCart = require("scripts.home.CartTabClass").new();     
         
-        local carousel = display.newGroup();
-        
---        local function scrolling(event)
---            
---            local phase = event.phase;
---            local direction = event.direction;
---            local scroll = event.target;
---            
---            local a,b,e,f
---       
---            --Atribuições
---            a = display.contentHeight * 0.1
---            b = display.contentHeight * 0.35
---            e = display.contentHeight * 0.05
---            f = display.contentHeight * 0.1
---                       
---            
-----            if "moved" == phase then
-----                local x,y = scroll:getContentPosition();
-----                scroll._view.xScale= (-((((e - a + b - f) / scroll.initWidth) * x) + (a - b)))/100
-----                scroll._view.yScale= (-((((e - a + b - f) / scroll.initWidth) * x) + (a - b)))/100
-----                ---scroll._view.width = scroll._view.width * scroll._view.xScale;
-----            end
---            
---            
---            
---            if("moved" == phase)then
---                local x,y = scroll:getContentPosition(); 
---                scroll._view.xScale=1+((x*t3)/scroll._view.width)*(-1)
---                scroll._view.yScale=1+((x*t3)/scroll._view.width)*(-1)
---                --scroll._view.width = scroll._view.width * scroll._view.xScale;
---            elseif ("ended" == phase) then
---                if event.limitReached then
---                    scroll._view.width = scroll._view.width
---                    print(scroll._view.width)
---                end
---            end
---            return true;
---        end
-        
---        local widget = require "widget";
---        local scrollView = widget.newScrollView{
---            width = display.contentWidth,
---            height = display.contentHeight,
---            scrollWidth = display.contentWidth,
---            scrollHeight = display.contentHeight,
---            listener = scrolling,
---            verticalScrollDisabled = true
---        };        
+        local carousel = display.newGroup();     
         
         home:createThumbProd(listProds,carousel);
         
@@ -135,6 +79,8 @@ function new()
         gCart.listProdY = 0;
         gCart.cart = {id=1,products={}};
         gCart:addEventListener("prod",gCart);
+        gCart.touch = onDragGCart;
+        gCart:addEventListener("touch",gCart);
         
         parentGroup:insert(gCart);
         parentGroup.gCart = gCart;
@@ -209,10 +155,14 @@ function new()
         b = display.contentHeight * 0.35
         c = display.contentHeight * 0.6
         d = display.contentHeight * 0.85
-        e = display.contentHeight * 0.05
-        f = display.contentHeight * 0.1
-        g = display.contentHeight * 0.15
-        h = display.contentHeight * 0.2
+        e=a
+        --e = display.contentHeight * 0.05
+        --f = display.contentHeight * 0.1
+        f=b
+        --g = display.contentHeight * 0.15
+        g=c
+        --h = display.contentHeight * 0.2
+        h=d
         x = 0
         
         --T1 Multiplica a escala
@@ -220,7 +170,7 @@ function new()
         scala1 =   -((((e - a + b - f) / display.contentWidth) * x) + (a - b))
         x = scala1 * 0.6;
         -- T2 multiplica o passo de X
-        t2 = 0.9
+        t2 = 1.2
         -- 
         local i = 1
         local numColunas = 1;
@@ -236,7 +186,6 @@ function new()
             image.yScale = (scala1 * t1) / 100
             if(scala1 > 0) then
                 group:insert(image);
-                --scrollView:insert(image);
                 image.touch = onDragAndDropImage;
                 image:addEventListener("touch", image);
                 image.product = listProds[i];
@@ -254,7 +203,6 @@ function new()
                 image.yScale = (scala1 * t1) / 100
                 if(scala1 > 0) then
                     group:insert(image);
-                    --scrollView:insert(image);
                     image.touch = onDragAndDropImage;
                     image:addEventListener("touch", image);
                     image.product = listProds[i];
@@ -271,7 +219,6 @@ function new()
                     image.yScale = (scala1 * t1) / 100
                     if(scala1 > 0) then
                         group:insert(image);
-                        --scrollView:insert(image);
                         image.touch = onDragAndDropImage;
                         image:addEventListener("touch", image);
                         image.product = listProds[i];
@@ -288,12 +235,6 @@ function new()
         scrollView.colunas = colunas;
         scrollView.x = 0;
         scrollView.y = 0;
---        scrollView.initX = display.contentWidth *0.05;
---        scrollView.initY = display.contentHeight *0.05;
---        scrollView.qtyCols = qtyCol;
---        scrollView.qtyRows = qtdMaxRow;
---        scrollView.initWidth = scrollView._view.width;
---        scrollView.initHeight = scrollView._view.height;  
     end
     
     --Função pega carrinho atual
