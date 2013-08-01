@@ -237,11 +237,6 @@ function new()
         scrollView.y = 0;
     end
     
-    --Função pega carrinho atual
-    function home:getCart()
-        return cart;
-    end
-    
     return home;
 end
 
