@@ -1,4 +1,5 @@
 module(...,package.seeall);
+local storyboard = require( "storyboard" );
 
 function new()
     
@@ -10,6 +11,13 @@ function new()
     local cart = {products={}};
     pullTab:setFillColor(125, 125, 125, 255); 
     local widget = require( "widget" );
+    
+    --Navigate to CheckOut
+    local function onCheckOutTouch(self,event)
+        
+        storyboard.gotoScene("scripts.checkout.CheckoutScene");
+        
+    end
     
     --Handle Deletebutton
     local function onTouchDeleteProduct(self,event)
@@ -131,6 +139,20 @@ function new()
     totalTab.y = display.contentHeight;
     totalTab:setFillColor(125, 125, 125, 255);
     
+    --Botão Checkout
+    local gCheckOutBtn = display.newGroup();
+    local checkOutBtn = display.newRect(gCheckOutBtn, 0, 0, display.contentWidth*0.12, display.contentHeight*0.1);
+    checkOutBtn:setFillColor(0,255,120,255);
+    local checkOutText = display.newText(gCheckOutBtn, "Checkout", 0, 0, "Helvetica", 13);
+    checkOutText:setReferencePoint(display.CenterReferencePoint);
+    checkOutText.x = checkOutBtn.width/2;
+    checkOutText.y = checkOutBtn.height/2;
+    gCheckOutBtn:setReferencePoint(display.BottomRightReferencePoint);
+    gCheckOutBtn.x = display.contentWidth*0.98;
+    gCheckOutBtn.y = display.contentHeight;
+    gCheckOutBtn.touch = onCheckOutTouch;
+    gCheckOutBtn:addEventListener("touch", gCheckOutBtn);
+    
     local totalText = display.newText("Subtotal: R$ 0.00 ",0,0,"Helvetica",20);
     totalText:setReferencePoint(display.BottomCenterReferencePoint);
     totalText.x = display.contentWidth *0.5;
@@ -150,6 +172,7 @@ function new()
     gCart:insert(tableView);
     gCart:insert(topTab);
     gCart:insert(totalTab);
+    gCart:insert(gCheckOutBtn);
     gCart:insert(totalText);
     
     function gCart:getCart()
