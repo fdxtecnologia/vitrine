@@ -1,5 +1,6 @@
 module(...,package.seeall);
 local storyboard = require( "storyboard" );
+saver = require( "scripts.Utils.dataSaver" );
 
 function new()
     
@@ -11,6 +12,7 @@ function new()
     local cart = {products={}};
     pullTab:setFillColor(125, 125, 125, 255); 
     local widget = require( "widget" );
+    local tableRowsCount = 0;
     
     --Navigate to CheckOut
     local function onCheckOutTouch(self,event)
@@ -24,13 +26,58 @@ function new()
         local phase = event.phase;
         local btn = self;
         local row = btn.parent;
+
+        local listProds = cart.products;
+
         if phase == "began" then
-            print("Delete ROW "..btn.row);
-            table.remove(cart.products, btn.row);
-            gCart.tableView:deleteRow(btn.row);
+            print("List lenght: "..#listProds);
+            table.remove(listProds, btn.row.index);
+            tableRowsCount = tableRowsCount -1;
+            gCart:remakeTable();
             gCart:refreshSubtotal();
-        end
+            saver.saveValue("cart", cart);
+        end   
+    end
+
+    function gCart:tableRefresh()
+
+        local newCart = cart;
         
+        for i=1,#cart.products do
+            newCart.products[i] = cart.products[i];
+        end
+
+        cart = newCart;
+    end
+
+    local function onTouchPlusProduct(self,event)
+        print("Plus Touched")
+        local phase = event.phase;
+        local btn = self;
+
+        if phase == "began" then
+
+            cart.products[btn.row.index].quantity = cart.products[btn.row.index].quantity + 1;
+            cart.products[btn.row.index].totalPrice = cart.products[btn.row.index].price * cart.products[btn.row.index].quantity;
+            gCart:remakeTable();
+            gCart:refreshSubtotal();
+            saver.saveValue("cart", cart);
+        end
+    end
+
+    local function onTouchMinusProduct(self,event)
+        local phase = event.phase;
+        local btn = self;
+
+        if phase == "began" then
+            if(cart.products[btn.row.index].quantity >=2 ) then
+                cart.products[btn.row.index].quantity = cart.products[btn.row.index].quantity - 1;
+                cart.products[btn.row.index].totalPrice = cart.products[btn.row.index].price * cart.products[btn.row.index].quantity;
+                gCart:remakeTable();
+                gCart:refreshSubtotal();
+            end
+            saver.saveValue("cart", cart);
+        end
     end
     
     
@@ -52,6 +99,7 @@ function new()
         rowQty:setReferencePoint(display.CenterReferencePoint);
         rowQty.x = row.contentWidth*0.5;
         rowQty.y = row.contentHeight*0.75;
+        row.rowQty = rowQty;
         
         local rowTitle = display.newText(row,product.title, 0, 0, "Helvetica", 15);
         rowTitle:setReferencePoint(display.CenterReferencePoint);
@@ -62,6 +110,7 @@ function new()
         rowPrice:setReferencePoint(display.CenterRightReferencePoint);
         rowPrice.x = row.contentWidth - rowQty.contentWidth*0.1;
         rowPrice.y = row.contentHeight*0.5;
+        row.rowPrice = rowPrice;
         
         --Minus item button
         local gMinusBtn = display.newGroup();
@@ -72,7 +121,7 @@ function new()
         minusText.x = minusBtn.width*0.5;
         minusText.y = minusBtn.height*0.5;
         gMinusBtn.x = row.contentWidth;
-        gMinusBtn.row = row.index;
+        gMinusBtn.row = row;
         gMinusBtn.touch = onTouchMinusProduct;
         gMinusBtn:addEventListener("touch", gMinusBtn);
         
@@ -85,7 +134,7 @@ function new()
         plusText.x = plusBtn.width*0.5;
         plusText.y = plusBtn.height*0.5;
         gPlusBtn.x = minusBtn.width+row.contentWidth;
-        gPlusBtn.row = row.index;
+        gPlusBtn.row = row;
         gPlusBtn.product = product;
         gPlusBtn.touch = onTouchPlusProduct;
         gPlusBtn:addEventListener("touch", gPlusBtn);
@@ -99,7 +148,7 @@ function new()
         deleteText.x = deleteBtn.width*0.5;
         deleteText.y = deleteBtn.height*0.5;
         gDeleteBtn.x = plusBtn.width + minusBtn.width +row.contentWidth;
-        gDeleteBtn.row = row.index;
+        gDeleteBtn.row = row;
         gDeleteBtn.product = product;
         gDeleteBtn.touch = onTouchDeleteProduct;
         gDeleteBtn:addEventListener("touch",gDeleteBtn);
@@ -131,6 +180,8 @@ function new()
         
     end
 
+    cart.subtotal = 0;
+
     local topTab = display.newRect(0, 0, display.contentWidth, display.contentHeight*0.1);
     topTab:setFillColor(125, 125, 125, 255);
     
@@ -157,7 +208,6 @@ function new()
     totalText:setReferencePoint(display.BottomCenterReferencePoint);
     totalText.x = display.contentWidth *0.5;
     totalText.y = display.contentHeight - display.contentHeight*0.01;
-    cart.subtotal = 0;
     
     local tableView = widget.newTableView{
         top=topTab.height,
@@ -169,6 +219,7 @@ function new()
     }
     
     gCart.tableView = tableView;
+    gCart.cart = cart;
     gCart:insert(tableView);
     gCart:insert(topTab);
     gCart:insert(totalTab);
@@ -180,18 +231,55 @@ function new()
     end
     
     function gCart:setCart(newCart)
-        cart = newCart;
+       cart = newCart;
     end
     
     function gCart:refreshSubtotal()
         local valor = 0;
-        
+
         for i=1,#cart.products do
             valor = valor + (cart.products[i].totalPrice);
         end
-        
+
         cart.subtotal = valor;
         totalText.text = "Subtotal: R$ "..valor;
+    end
+
+    function gCart:remakeTable()
+
+        local isRepeated = false;
+        local isCategory = false
+        local rowHeight = display.contentHeight*0.2;
+        local rowColor = 
+        { 
+            default = { 0, 0, 0 },
+        }
+        local lineColor = { 0, 0, 0 }
+
+        gCart.tableView:removeSelf();
+        gCart.tableView = nil;
+
+        local newTableView = widget.newTableView{
+            top=topTab.height,
+            width = display.contentWidth,
+            height = display.contentHeight-topTab.height-totalTab.height,
+            listener = tableViewListener,
+            onRowRender = onRowRender,
+            onRowTouch = onRowTouch
+        }
+
+        gCart:insert(1,newTableView);
+        gCart.tableView = newTableView;
+
+        for i=1,#cart.products do
+            gCart.tableView:insertRow
+            {
+                isCategory = isCategory,
+                rowHeight = rowHeight,
+                rowColor = rowColor,
+                lineColor = lineColor,
+            } 
+        end        
     end
     
     function gCart:refreshList()
@@ -203,9 +291,9 @@ function new()
             default = { 0, 0, 0 },
         }
         local lineColor = { 0, 0, 0 }
-        
+
         for i=1,#cart.products do
-            tableView:insertRow
+            gCart.tableView:insertRow
             {
                 isCategory = isCategory,
                 rowHeight = rowHeight,
@@ -216,7 +304,6 @@ function new()
     end
     
     function gCart:addToList(product)
-        print("ADD TO LISt")
         local isRepeated = false;
         local isCategory = false
         local rowHeight = display.contentHeight*0.2;
@@ -225,18 +312,19 @@ function new()
             default = { 0, 0, 0 },
         }
         local lineColor = { 0, 0, 0 }
-        print(cart.subtotal)
+
         cart.subtotal = cart.subtotal + product.price;
         totalText.text = "Subtotal: R$ "..cart.subtotal;
         for i=1,#cart.products do
+            print("Entrou laço "..cart.products[i].title);
             if(cart.products[i].idProduct == product.idProduct)then
+                print("TA AQUI PORRA");
                 isRepeated = true;
                 cart.products[i].quantity = cart.products[i].quantity + 1;
                 cart.products[i].totalPrice = product.price * cart.products[i].quantity;
                 gCart:refreshList();
             end
         end
-        
         if(isRepeated==false)then
             local newProd = product
             newProd.quantity = 1;
@@ -250,7 +338,9 @@ function new()
                 rowColor = rowColor,
                 lineColor = lineColor,
             } 
+            tableRowsCount = tableRowsCount +1;
         end 
+        saver.saveValue("cart", cart);
     end
      
     return gCart;
