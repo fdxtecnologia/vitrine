@@ -1,6 +1,6 @@
 module(...,package.seeall);
 local storyboard = require( "storyboard" );
-saver = require( "scripts.Utils.dataSaver" );
+--saver = require( "scripts.Utils.dataSaver" );
 
 function new()
     
@@ -35,7 +35,7 @@ function new()
             tableRowsCount = tableRowsCount -1;
             gCart:remakeTable();
             gCart:refreshSubtotal();
-            saver.saveValue("cart", cart);
+            --saver.saveValue("cart", cart);
         end   
     end
 
@@ -61,7 +61,7 @@ function new()
             cart.products[btn.row.index].totalPrice = cart.products[btn.row.index].price * cart.products[btn.row.index].quantity;
             gCart:remakeTable();
             gCart:refreshSubtotal();
-            saver.saveValue("cart", cart);
+            --saver.saveValue("cart", cart);
         end
     end
 
@@ -76,7 +76,7 @@ function new()
                 gCart:remakeTable();
                 gCart:refreshSubtotal();
             end
-            saver.saveValue("cart", cart);
+           -- saver.saveValue("cart", cart);
         end
     end
     
@@ -340,7 +340,7 @@ function new()
             } 
             tableRowsCount = tableRowsCount +1;
         end 
-        saver.saveValue("cart", cart);
+       -- saver.saveValue("cart", cart);
     end
      
     return gCart;
