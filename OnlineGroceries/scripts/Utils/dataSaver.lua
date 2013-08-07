@@ -1,12 +1,13 @@
 module(..., package.seeall)
 
-require "json"
+json = require ("json");
 
 function saveValue(key, value)
 	--temp variable
 	local app
+	local path = system.pathForFile( "data.txt", system.DocumentsDirectory )
 	--open file
-	local file = io.open( system.pathForFile( "data.txt", system.ResourceDirectory ), "r" )
+	local file = io.open( path, "r" )
 	if file then
 		-- read all contents of file into a string
 		local contents = file:read( "*a" )
@@ -46,12 +47,8 @@ end
 function loadValue(key)
 	--temp variable
 	local app
-	--default dtaa storage
-	local filename = "app.data"
-	--get directory
-	local base = system.ResourceDirectory
 	-- create a file path for corona i/o
-	local path = system.pathForFile( filename, base )
+	local path = system.pathForFile( "data.txt", system.DocumentsDirectory )
 	--open file
 	local file = io.open( path, "r" )
 	if file then

@@ -13,7 +13,9 @@ function new()
     pullTab:setFillColor(125, 125, 125, 255); 
     local widget = require( "widget" );
     local tableRowsCount = 0;
-    
+
+    local loadFile = saver.loadValue("cart");
+
     --Navigate to CheckOut
     local function onCheckOutTouch(self,event)
         
@@ -302,6 +304,10 @@ function new()
             } 
         end
     end
+
+    function gCart:deleteCartState()
+        saver.saveValue("cart","");
+    end
     
     function gCart:addToList(product)
         local isRepeated = false;
@@ -341,6 +347,14 @@ function new()
             tableRowsCount = tableRowsCount +1;
         end 
        -- saver.saveValue("cart", cart);
+    end
+
+    if(loadFile == nil)then
+        print("Arquivo nulo");
+    else
+        cart = loadFile;
+        gCart:remakeTable();
+        print("LOAD FILE "..cart.products[1].title);
     end
      
     return gCart;
