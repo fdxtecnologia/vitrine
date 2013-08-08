@@ -63,17 +63,29 @@ function new()
     
     --Construção do cenario
     function home:buildCenario(listProds,parentGroup)
+        --Listener do scrollView
+        local function scrolling(event)
+            local phase = event.phase;
+            local scroll = event.target;
+
+            if phase == "began" then
+                display.getCurrentStage():setFocus(scroll);
+            elseif phase == "moved" then
+                print("Moved");
+            elseif phase == "ended" then
+                display.getCurrentStage():setFocus(nil);
+            end
+        end
+
         --Taxa de incremento da escala
         local t3 = 0.95;
         
         local gCart = require("scripts.home.CartTabClass").new();     
-        
+
+        local widget = require "widget";
         local carousel = display.newGroup();     
         
         home:createThumbProd(listProds,carousel);
-        
-        carousel.touch = onTouch
-        carousel:addEventListener("touch", carousel);
         
         gCart.prod = prod_listener
         gCart.listProdY = 0;
@@ -102,20 +114,18 @@ function new()
                 type = "selected"
             }
             gCart:dispatchEvent(event);
-            
-            display.getCurrentStage():setFocus(self);
+
+            print("began");
             self.markX = self.x;
             self.markY = self.y;
             self.isFocus = true;
             self:toFront();
-        elseif self.isFocus then
-            if(event.phase=="moved")then
+        elseif(event.phase=="moved")then
                 local x = (event.x - event.xStart) + self.markX;
                 local y = (event.y - event.yStart) + self.markY;
                 self.x, self.y = x,y;
                 print("DRAG");
-                end
-                if(event.phase=="ended")then
+        elseif(event.phase=="ended")then
                     print("gCart y "..gCart.y);
                     if(self.y >= gCart.y)then
                         local event = {
@@ -135,7 +145,6 @@ function new()
                     self.y = self.markY;
                     display.getCurrentStage():setFocus(nil); 
                     self.isFocus = nil;
-                end
         end
         return true;
     end
