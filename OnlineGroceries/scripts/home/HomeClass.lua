@@ -49,17 +49,55 @@ function new()
             display.getCurrentStage():setFocus(self)
         elseif event.phase == "moved" then
             local movedX = event.x - self.startX
-            print(movedX, movedY)
             self.x = self.x + movedX
             self.startX = event.x
+
+            local teste = self.width + self.x;
+            print("POSICAO TESTE: --- "..teste)
+            if teste < display.contentWidth then
+                if(self.finalX == nil)then
+                    self.finalX = self.x;
+                end
+                transition.to(self, { time=100,x=self.finalX})
+            end
+
             local group = self.colunas[1];
             print("Coluna 1:",group[1]);
-            self.xScale = 1+((self.x)*(-1))/display.contentWidth;
-            self.yScale = 1+((self.x)*(-1))/display.contentWidth;
         elseif event.phase == "ended" then
+            if self.x > self.initX then
+                print("MAISS");
+                transition.to(self, { time=100,x=self.initX})
+            end
             display.getCurrentStage():setFocus(nil)
         end             
     end
+
+    --TextField Handler
+    local function onTextFieldListener(self,event)
+        local phase = event.phase;
+
+        print("PHASEEE: ----- ",event.phase);
+
+        if phase == "ended" then
+            self:removeSelf();
+        end
+    end
+
+    --Fake TextField handler
+    local function onTouchFaketextField(self,event)
+        local phase = event.phase;
+        local parentGroup = self.parent;
+
+        if phase == "began" then
+            local textField = native.newTextField(self.x, self.y, self.width, self.height);
+            textField.userInput = onTextFieldListener;
+            textField:addEventListener("userInput",textField);
+            native.setKeyboardFocus(textField);
+            textField:setFocus(true);
+            --textField:dispatchEvent({name="userInput",phase="began", target=textField });
+            --parentGroup:insert(textField);
+        end
+    end 
     
     --Construção do cenario
     function home:buildCenario(listProds,parentGroup)
@@ -71,10 +109,26 @@ function new()
         local carousel = display.newGroup();     
         
         home:createThumbProd(listProds,carousel);
-        
+
         carousel.touch = onTouch
         carousel:addEventListener("touch", carousel);
-        
+
+        local searchGroup = display.newGroup();
+        local spotlightImg = display.newImage("images/spotlight.png");
+        spotlightImg.x = 0;
+        spotlightImg.y = 0;
+        spotlightImg.width = display.contentHeight*0.08;
+        spotlightImg.height = display.contentHeight*0.08;
+        spotlightImg.touch = onSearchTouch;
+        spotlightImg:addEventListener("touch",spotlightImg);
+        local fakeSearchField = display.newRect(0,0,display.contentWidth*0.5, display.contentHeight*0.05);
+        fakeSearchField:setReferencePoint(display.TopLeftReferencePoint);
+        fakeSearchField.x, fakeSearchField.y  = 0,0;
+        searchGroup:insert(fakeSearchField);
+        searchGroup:insert(spotlightImg);
+        fakeSearchField.touch =  onTouchFaketextField;
+        fakeSearchField:addEventListener("touch",fakeSearchField);
+
         gCart.prod = prod_listener
         gCart.listProdY = 0;
         gCart.cart = {id=1,products={}};
@@ -82,9 +136,11 @@ function new()
         gCart.touch = onDragGCart;
         gCart:addEventListener("touch",gCart);
         
+        carousel:insert(searchGroup);
         parentGroup:insert(gCart);
         parentGroup.gCart = gCart;
         parentGroup:insert(carousel);
+        carousel.initX = carousel.x;
         parentGroup.carousel = carousel;
     end   
     
@@ -101,8 +157,8 @@ function new()
                 name = "prod",
                 type = "selected"
             }
+            print("Began");
             gCart:dispatchEvent(event);
-            
             display.getCurrentStage():setFocus(self);
             self.markX = self.x;
             self.markY = self.y;
@@ -113,8 +169,12 @@ function new()
                 local x = (event.x - event.xStart) + self.markX;
                 local y = (event.y - event.yStart) + self.markY;
                 self.x, self.y = x,y;
-                print("DRAG");
                 end
+                -- local dx = math.abs( event.x - event.xStart )
+                -- if dx > 0 then
+                --     display.getCurrentStage():setFocus(gCarousel);
+                -- end
+
                 if(event.phase=="ended")then
                     print("gCart y "..gCart.y);
                     if(self.y >= gCart.y)then
@@ -133,7 +193,7 @@ function new()
                     end
                     self.x = self.markX;
                     self.y = self.markY;
-                    display.getCurrentStage():setFocus(nil); 
+                    display.getCurrentStage():setFocus(nil);
                     self.isFocus = nil;
                 end
         end
@@ -229,6 +289,9 @@ function new()
             table.insert(colunas,group);
             scrollView:insert(colunas[numColunas]);
             numColunas=numColunas+1;
+            local bgCarousel = display.newRect(0,0,scrollView.width,display.contentHeight);
+            bgCarousel:setFillColor(255,255,255,0);
+            scrollView:insert(1,bgCarousel);
             --incrementando x
             x = x + (scala1 * t2)
         end

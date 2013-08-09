@@ -1,4 +1,5 @@
 module(...,package.seeall);
+local json = require("json");
 
 function new()
     
@@ -26,6 +27,15 @@ function new()
     
     function jsonHandler:getJSONWithParams(url, params, listener)
         network.request(url, "POST", listener, params); 
+    end
+
+    function jsonHandler:encode(tableToJson)
+        return json:encode(tableToJson);
+    end
+
+    function jsonHandler:decode(jsonToTable)
+        local tableFromJson = json:decode(jsonToTable);
+        return tableFromJson;
     end
     
     return jsonHandler;

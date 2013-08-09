@@ -349,7 +349,7 @@ function new()
        saver.saveValue("cart", cart);
     end
 
-    if(loadFile == nil)then
+    if(loadFile.products[1] == nil)then
         print("Arquivo nulo");
     else
         cart = loadFile;
