@@ -12,4 +12,11 @@ settings = {
 			UIStatusBarHidden=true,
 		},
 	},
+	android =
+   	{
+      usesPermissions =
+      {
+         "android.permission.INTERNET",
+      },
+   	},
 }

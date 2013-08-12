@@ -56,9 +56,7 @@ end
 -- Called if/when overlay scene is displayed via storyboard.showOverlay()
 function scene:overlayBegan( event )
     local group = self.view
-    local overlay_name = event.sceneName  -- name of the overlay scene
-    
-    
+    local overlay_name = event.sceneName  -- name of the overlay scene    
 end
 
 

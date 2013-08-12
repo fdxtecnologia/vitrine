@@ -4,6 +4,7 @@
  */
 package br.com.fdxtecnologia.comparador.model;
 
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,6 +38,7 @@ public class Order implements Serializable {
     private BigDecimal totalPrice;
     private BigDecimal shippingPrice;
     @Transient
+    @XStreamImplicit(itemFieldName = "products")
     private List<ProductJSON> products;
 
     public List<ProductJSON> getProducts() {

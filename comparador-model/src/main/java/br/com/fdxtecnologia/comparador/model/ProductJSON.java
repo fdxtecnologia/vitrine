@@ -17,7 +17,7 @@ public class ProductJSON {
 
     private Long idProduct;
     private String title;
-    private int quantity;
+    private Integer quantity;
     private BigDecimal price;
     private BigDecimal totalPrice;
     private String sku;
@@ -32,7 +32,7 @@ public class ProductJSON {
     public ProductJSON() {
     }
 
-    public ProductJSON(Long idProduct, String sku, String title, int quantity, BigDecimal price) {
+    public ProductJSON(Long idProduct, String sku, String title, Integer quantity, BigDecimal price) {
         this.sku = sku;
         this.idProduct = idProduct;
         this.title = title;
@@ -40,8 +40,8 @@ public class ProductJSON {
         this.price = price;
         this.totalPrice = this.price.multiply(new BigDecimal(this.quantity));
     }
-    
-    public ProductJSON(Product product){
+
+    public ProductJSON(Product product) {
         this.sku = product.getSku();
         this.idProduct = product.getId();
         this.title = product.getTitle();
@@ -66,11 +66,11 @@ public class ProductJSON {
         this.title = title;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -93,7 +93,7 @@ public class ProductJSON {
     public String getSku() {
         return sku;
     }
-
+    
     public void setSku(String sku) {
         this.sku = sku;
     }

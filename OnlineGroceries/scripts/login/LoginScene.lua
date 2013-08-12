@@ -1,3 +1,4 @@
+
 local storyboard = require( "storyboard" );
 local scene = storyboard.newScene();
 
@@ -56,6 +57,7 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
         local group = self.view
+        storyboard.removeScene(scene)
         -----------------------------------------------------------------------------
 
         --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
@@ -68,7 +70,7 @@ end
 -- Called AFTER scene has finished moving offscreen:
 function scene:didExitScene( event )
         local group = self.view
-
+        storyboard.purgeScene("scene")
         -----------------------------------------------------------------------------
 
         --      This event requires build 2012.782 or later.

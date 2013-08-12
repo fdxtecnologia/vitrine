@@ -4,6 +4,7 @@
  */
 package br.com.fdxtecnologia.vitrine.services.impl;
 
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -14,6 +15,7 @@ import br.com.fdxtecnologia.comparador.model.Customer;
 import br.com.fdxtecnologia.vitrine.services.dao.CustomerDAO;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -50,8 +52,9 @@ public class CustomerServices {
         }
     }
 
-    @Path("/add")
     @Post
-    public void addUser() {
+    @Consumes("application/json")
+    public void loginCustomerFB(Customer customer) {
+        System.out.println("VISh");
     }
 }

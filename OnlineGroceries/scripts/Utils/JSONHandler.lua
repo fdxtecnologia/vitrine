@@ -14,8 +14,8 @@ function new()
         
         local headers = {};
         
-        headers["Content-Type"] = "application/x-www-form-urlencoded";
-        headers["Accept-Language"] = "en-US";
+        headers["Content-Type"] = "application/json";
+        headers["Accept-Language"] = "en-US, pt-BR";
         
         local params={};
         params.headers = headers;

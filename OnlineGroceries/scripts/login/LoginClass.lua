@@ -4,34 +4,18 @@ function new()
     local login = {};
     
     function login:buildForm(parentGroup)
+
         display.setStatusBar( display.HiddenStatusBar )
-        
-        local formGroup = display.newGroup();
-        
---        local widget = require "widget"
---        local sbHeight = display.statusBarHeight
---        local tbHeight = 44
---        local top = sbHeight + tbHeight
-        
-        -- forward declarations
-        local titleField, noteText, loadSavedNote, saveNote
-        local textFont = native.newFont( native.systemFont )
-        
-        local lblLogin = display.newText(formGroup, "Login", display.contentWidth*0.5-display.contentWidth*0.1, display.contentHeight*0.1, display.contentWidth*0.2, display.contentHeight*0.2, textFont, 23);
-        
-        local userField = native.newTextField(display.contentWidth*0.5-((display.contentWidth*0.33)/2), display.contentHeight*0.3, display.contentWidth*0.33, 23, listener);
-        
-        local passField = native.newTextField(display.contentWidth*0.5-((display.contentWidth*0.33)/2), display.contentHeight*0.4, display.contentWidth*0.33, 23, listener);
-        
-        
-        
-        formGroup:insert(userField);
-        formGroup:insert(passField);
+        local title = display.newText("Logar com Facebook!", 10, 50, native.systemFontBold, 16)
+        local fbUtils = require("scripts.Utils.FacebookUtils").new()
+        local response = fbUtils:login()
+        print ("Response: "..tostring(response))
+        local storyboard  = require("storyboard");
+        parentGroup:insert(title)
+        if(response) then
+        	storyboard.gotoScene("scripts.home.HomeScene")
+    	end
     end
-    
-    function login:authenticate(user, password)
         
-    end
-    
     return login
 end
