@@ -9,7 +9,7 @@ settings = {
 	{
 		plist=
 		{
-			--UIStatusBarHidden=true,
+			UIStatusBarHidden=true,
 		},
 	},
 }

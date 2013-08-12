@@ -324,7 +324,6 @@ function new()
         for i=1,#cart.products do
             print("Entrou laço "..cart.products[i].title);
             if(cart.products[i].idProduct == product.idProduct)then
-                print("TA AQUI PORRA");
                 isRepeated = true;
                 cart.products[i].quantity = cart.products[i].quantity + 1;
                 cart.products[i].totalPrice = product.price * cart.products[i].quantity;
@@ -349,12 +348,17 @@ function new()
        saver.saveValue("cart", cart);
     end
 
-    if(loadFile.products[1] == nil)then
-        print("Arquivo nulo");
+    if(loadFile == nil) then
+        saver.saveValue("cart",cart);
+        loadFile = saver.loadValue("cart");
     else
-        cart = loadFile;
-        gCart:remakeTable();
-        print("LOAD FILE "..cart.products[1].title);
+            if(loadFile.products[1] == nil)then
+                print("Arquivo nulo");
+            else
+                cart = loadFile;
+                gCart:remakeTable();
+                print("LOAD FILE "..cart.products[1].title);
+            end
     end
      
     return gCart;

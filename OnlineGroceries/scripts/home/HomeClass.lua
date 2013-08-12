@@ -65,39 +65,11 @@ function new()
             print("Coluna 1:",group[1]);
         elseif event.phase == "ended" then
             if self.x > self.initX then
-                print("MAISS");
                 transition.to(self, { time=100,x=self.initX})
             end
             display.getCurrentStage():setFocus(nil)
         end             
     end
-
-    --TextField Handler
-    local function onTextFieldListener(self,event)
-        local phase = event.phase;
-
-        print("PHASEEE: ----- ",event.phase);
-
-        if phase == "ended" then
-            self:removeSelf();
-        end
-    end
-
-    --Fake TextField handler
-    local function onTouchFaketextField(self,event)
-        local phase = event.phase;
-        local parentGroup = self.parent;
-
-        if phase == "began" then
-            local textField = native.newTextField(self.x, self.y, self.width, self.height);
-            textField.userInput = onTextFieldListener;
-            textField:addEventListener("userInput",textField);
-            native.setKeyboardFocus(textField);
-            textField:setFocus(true);
-            --textField:dispatchEvent({name="userInput",phase="began", target=textField });
-            --parentGroup:insert(textField);
-        end
-    end 
     
     --Construção do cenario
     function home:buildCenario(listProds,parentGroup)
@@ -113,21 +85,20 @@ function new()
         carousel.touch = onTouch
         carousel:addEventListener("touch", carousel);
 
-        local searchGroup = display.newGroup();
-        local spotlightImg = display.newImage("images/spotlight.png");
-        spotlightImg.x = 0;
-        spotlightImg.y = 0;
-        spotlightImg.width = display.contentHeight*0.08;
-        spotlightImg.height = display.contentHeight*0.08;
-        spotlightImg.touch = onSearchTouch;
-        spotlightImg:addEventListener("touch",spotlightImg);
-        local fakeSearchField = display.newRect(0,0,display.contentWidth*0.5, display.contentHeight*0.05);
-        fakeSearchField:setReferencePoint(display.TopLeftReferencePoint);
-        fakeSearchField.x, fakeSearchField.y  = 0,0;
-        searchGroup:insert(fakeSearchField);
-        searchGroup:insert(spotlightImg);
-        fakeSearchField.touch =  onTouchFaketextField;
-        fakeSearchField:addEventListener("touch",fakeSearchField);
+        -- local searchGroup = display.newGroup();
+        -- local spotlightImg = display.newImage("images/spotlight.png");
+        -- spotlightImg.x = 0;
+        -- spotlightImg.y = 0;
+        -- spotlightImg.width = display.contentHeight*0.08;
+        -- spotlightImg.height = display.contentHeight*0.08;
+        -- spotlightImg.touch = onSearchTouch;
+        -- spotlightImg:addEventListener("touch",spotlightImg);
+
+        -- searchGroup:insert(spotlightImg);
+
+        local textField = require("scripts.fdxTextField").new(0,0,display.contentWidth*0.5,display.contentHeight*0.1);
+        textField.x = 0;
+        textField.y = 0;
 
         gCart.prod = prod_listener
         gCart.listProdY = 0;
@@ -135,11 +106,11 @@ function new()
         gCart:addEventListener("prod",gCart);
         gCart.touch = onDragGCart;
         gCart:addEventListener("touch",gCart);
-        
-        carousel:insert(searchGroup);
+
         parentGroup:insert(gCart);
         parentGroup.gCart = gCart;
         parentGroup:insert(carousel);
+        parentGroup:insert(textField);
         carousel.initX = carousel.x;
         parentGroup.carousel = carousel;
     end   
@@ -164,38 +135,31 @@ function new()
             self.markY = self.y;
             self.isFocus = true;
             self:toFront();
-        elseif self.isFocus then
-            if(event.phase=="moved")then
+        elseif(event.phase=="moved")then
                 local x = (event.x - event.xStart) + self.markX;
                 local y = (event.y - event.yStart) + self.markY;
                 self.x, self.y = x,y;
-                end
-                -- local dx = math.abs( event.x - event.xStart )
-                -- if dx > 0 then
-                --     display.getCurrentStage():setFocus(gCarousel);
-                -- end
-
-                if(event.phase=="ended")then
+        elseif(event.phase=="ended")then
                     print("gCart y "..gCart.y);
-                    if(self.y >= gCart.y)then
-                        local event = {
-                            name = "prod",
-                            type = "added",
-                            product = self.product
-                        }
-                        gCart:dispatchEvent(event);
-                    else
-                        local event = {
-                            name = "prod",
-                            type = "release"
-                        }
-                        gCart:dispatchEvent(event)
-                    end
-                    self.x = self.markX;
-                    self.y = self.markY;
-                    display.getCurrentStage():setFocus(nil);
-                    self.isFocus = nil;
+                if(self.y >= gCart.y)then
+                    local event = {
+                        name = "prod",
+                        type = "added",
+                        product = self.product
+                    }
+                    gCart:dispatchEvent(event);
+                else
+                    local event = {
+                       name = "prod",
+                       type = "release"
+                    }
+                    gCart:dispatchEvent(event)
                 end
+            self.x = self.markX;
+            self.y = self.markY;
+            print("SET FOCUS NIL");
+            display.getCurrentStage():setFocus(nil);
+           self.isFocus = nil;
         end
         return true;
     end

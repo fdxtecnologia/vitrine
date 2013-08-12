@@ -54,7 +54,7 @@ function scene:enterScene( event )
         local listProds;
         local DB = require("scripts.Utils.cartDB").new();
         DB:initDB();
-        local path = system.pathForFile( "products.json")
+        local path = system.pathForFile( "products.json");
 
         local file = io.open( path, "r" )
 
