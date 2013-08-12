@@ -194,7 +194,7 @@ function new()
     
     --Botão Checkout
     local gCheckOutBtn = display.newGroup();
-    local checkOutBtn = display.newRect(gCheckOutBtn, 0, 0, display.contentWidth*0.12, display.contentHeight*0.1);
+    local checkOutBtn = display.newRect(gCheckOutBtn, 0, 0, display.contentWidth*0.12, display.contentHeight*0.166);
     checkOutBtn:setFillColor(0,255,120,255);
     local checkOutText = display.newText(gCheckOutBtn, "Checkout", 0, 0, "Helvetica", 13);
     checkOutText:setReferencePoint(display.CenterReferencePoint);
@@ -306,7 +306,8 @@ function new()
     end
 
     function gCart:deleteCartState()
-        saver.saveValue("cart","");
+        local clearCart = {products={}};
+        saver.saveValue("cart",clearCart);
     end
     
     function gCart:addToList(product)

@@ -4,7 +4,6 @@ function new(x,y,width,height)
 
 	local fdxTextField = display.newGroup();
 	local fakeTextField = display.newRect(0,0,width,height);
-	fakeTextField.touch = onTouchFakeTextField;
 	fdxTextField.x = x;
 	fdxTextField.y = y;
 	fdxTextField:insert(fakeTextField);
@@ -32,8 +31,10 @@ function new(x,y,width,height)
 			realTextField:addEventListener("userInput", realTextField);
 			fdxTextField:insert(realTextField);
 		end
+		return true;
 	end
-
+	
+	fakeTextField.touch = onTouchFakeTextField;
 	fakeTextField:addEventListener("touch", fakeTextField);
 	print("TEXT FIELD")
 	return fdxTextField;

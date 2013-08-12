@@ -14,19 +14,25 @@ function new()
             self.initPosY = self.y;
             self:toFront();
             display.getCurrentStage():setFocus(self)
-        elseif phase == "moved" then
-            movedY = event.y - self.startY;
-            self.y = self.y + movedY;
-            self.startY = event.y;
-        elseif phase == "ended" then
-                if(self.y <= display.contentHeight*0.5)then
-                    self.y = 0;
-                else
-                    self.y = display.contentHeight;
-                    self:toBack();
-                end
-            display.getCurrentStage():setFocus(nil);
+            self.isFocus = true;
         end
+        if (self.isFocus == true) then
+            if phase == "moved" then
+                movedY = event.y - self.startY;
+                self.y = self.y + movedY;
+                self.startY = event.y;
+            elseif phase == "ended" then
+                    if(self.y <= display.contentHeight*0.5)then
+                        self.y = 0;
+                    else
+                        self.y = display.contentHeight;
+                        self:toBack();
+                    end
+                display.getCurrentStage():setFocus(nil);
+                self.isFocus = nil;
+            end
+        end
+        return true;
     end
     
     -- Evento que trata a aba do carrinho
@@ -47,28 +53,35 @@ function new()
             print("TOUCH");
             self.startX= event.x
             display.getCurrentStage():setFocus(self)
-        elseif event.phase == "moved" then
-            local movedX = event.x - self.startX
-            self.x = self.x + movedX
-            self.startX = event.x
+            self.isFocus = true;
+        end
+        if(self.isFocus == true) then
+            if event.phase == "moved" then
+                local movedX = event.x - self.startX
+                self.x = self.x + movedX
+                self.startX = event.x
 
-            local teste = self.width + self.x;
-            print("POSICAO TESTE: --- "..teste)
-            if teste < display.contentWidth then
-                if(self.finalX == nil)then
-                    self.finalX = self.x;
+                local teste = self.width + self.x;
+                print("POSICAO TESTE: --- "..teste)
+                if teste < display.contentWidth then
+                    if(self.finalX == nil)then
+                        self.finalX = self.x;
+                    end
+                    transition.to(self, { time=100,x=self.finalX})
                 end
-                transition.to(self, { time=100,x=self.finalX})
-            end
 
-            local group = self.colunas[1];
-            print("Coluna 1:",group[1]);
-        elseif event.phase == "ended" then
-            if self.x > self.initX then
-                transition.to(self, { time=100,x=self.initX})
+                local group = self.colunas[1];
+                print("Coluna 1:",group[1]);
+            elseif event.phase == "ended" then
+                if self.x > self.initX then
+                    transition.to(self, { time=100,x=self.initX})
+                end
+                display.getCurrentStage():setFocus(nil);
+                self.isFocus = nil;
             end
-            display.getCurrentStage():setFocus(nil)
-        end             
+        end
+
+        return true;           
     end
     
     --Construção do cenario
@@ -82,7 +95,7 @@ function new()
         
         home:createThumbProd(listProds,carousel);
 
-        carousel.touch = onTouch
+        carousel.touch = onTouch;
         carousel:addEventListener("touch", carousel);
 
         -- local searchGroup = display.newGroup();
@@ -96,7 +109,7 @@ function new()
 
         -- searchGroup:insert(spotlightImg);
 
-        local textField = require("scripts.fdxTextField").new(0,0,display.contentWidth*0.5,display.contentHeight*0.1);
+        local textField = require("scripts.fdxTextField").new(0,0,display.contentWidth*0.5,display.contentHeight*0.05);
         textField.x = 0;
         textField.y = 0;
 
@@ -135,31 +148,34 @@ function new()
             self.markY = self.y;
             self.isFocus = true;
             self:toFront();
-        elseif(event.phase=="moved")then
-                local x = (event.x - event.xStart) + self.markX;
-                local y = (event.y - event.yStart) + self.markY;
-                self.x, self.y = x,y;
-        elseif(event.phase=="ended")then
-                    print("gCart y "..gCart.y);
-                if(self.y >= gCart.y)then
-                    local event = {
-                        name = "prod",
-                        type = "added",
-                        product = self.product
-                    }
-                    gCart:dispatchEvent(event);
-                else
-                    local event = {
-                       name = "prod",
-                       type = "release"
-                    }
-                    gCart:dispatchEvent(event)
-                end
-            self.x = self.markX;
-            self.y = self.markY;
-            print("SET FOCUS NIL");
-            display.getCurrentStage():setFocus(nil);
-           self.isFocus = nil;
+        end
+        if(self.isFocus == true) then
+            if(event.phase=="moved")then
+                    local x = (event.x - event.xStart) + self.markX;
+                    local y = (event.y - event.yStart) + self.markY;
+                    self.x, self.y = x,y;
+            elseif(event.phase=="ended")then
+                        print("gCart y "..gCart.y);
+                    if(self.y >= gCart.y)then
+                        local event = {
+                            name = "prod",
+                            type = "added",
+                            product = self.product
+                        }
+                        gCart:dispatchEvent(event);
+                    else
+                        local event = {
+                           name = "prod",
+                           type = "release"
+                        }
+                        gCart:dispatchEvent(event)
+                    end
+                self.x = self.markX;
+                self.y = self.markY;
+                print("SET FOCUS NIL");
+                display.getCurrentStage():setFocus(nil);
+               self.isFocus = nil;
+            end
         end
         return true;
     end
@@ -253,7 +269,7 @@ function new()
             table.insert(colunas,group);
             scrollView:insert(colunas[numColunas]);
             numColunas=numColunas+1;
-            local bgCarousel = display.newRect(0,0,scrollView.width,display.contentHeight);
+            local bgCarousel = display.newRect(0,0,scrollView.width,scrollView.height);
             bgCarousel:setFillColor(255,255,255,0);
             scrollView:insert(1,bgCarousel);
             --incrementando x
