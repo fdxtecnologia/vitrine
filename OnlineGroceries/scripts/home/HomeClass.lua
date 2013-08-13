@@ -1,5 +1,4 @@
 module(...,package.seeall);
-system.activate("multitouch");
 
 function new()
     
@@ -54,6 +53,7 @@ function new()
             self.startX= event.x
             display.getCurrentStage():setFocus(self)
             self.isFocus = true;
+            self:toFront();
         end
         if(self.isFocus == true) then
             if event.phase == "moved" then
@@ -128,39 +128,45 @@ function new()
         parentGroup.carousel = carousel;
     end   
     
+    local function listener(event,img)
+        print("TESTE");
+    end
+
      -- Drag and Drop dos items
     local function onDragAndDropImage(self,event)
         
-        local gCol = self.parent;
+        local gThumb = self.parent;
+        local gCol = gThumb.parent;
         local gCarousel = gCol.parent;
         local parentGroup = gCarousel.parent;      
         local gCart = parentGroup.gCart;
-    
+        local image = self.image;
+
         if(event.phase=="began")then
             local event = {
                 name = "prod",
                 type = "selected"
             }
             print("Began");
-            gCart:dispatchEvent(event);
             display.getCurrentStage():setFocus(self);
-            self.markX = self.x;
-            self.markY = self.y;
+            gCart:dispatchEvent(event);
+            gThumb.markX = gThumb.x;
+            gThumb.markY = gThumb.y;
             self.isFocus = true;
-            self:toFront();
+            gThumb:toFront();
         end
         if(self.isFocus == true) then
             if(event.phase=="moved")then
-                    local x = (event.x - event.xStart) + self.markX;
-                    local y = (event.y - event.yStart) + self.markY;
-                    self.x, self.y = x,y;
+                    local x = (event.x - event.xStart) + gThumb.markX;
+                    local y = (event.y - event.yStart) + gThumb.markY;
+                    gThumb.x, gThumb.y = x,y;
             elseif(event.phase=="ended")then
-                        print("gCart y "..gCart.y);
-                    if(self.y >= gCart.y)then
+                    if(event.y >= gCart.y)then
+                        print("ADDED");
                         local event = {
                             name = "prod",
                             type = "added",
-                            product = self.product
+                            product = image.product
                         }
                         gCart:dispatchEvent(event);
                     else
@@ -170,8 +176,8 @@ function new()
                         }
                         gCart:dispatchEvent(event)
                     end
-                self.x = self.markX;
-                self.y = self.markY;
+                gThumb.x = gThumb.markX;
+                gThumb.y = gThumb.markY;
                 print("SET FOCUS NIL");
                 display.getCurrentStage():setFocus(nil);
                self.isFocus = nil;
@@ -185,10 +191,12 @@ function new()
         
         --COMEÇANDO
         local sizeImage = 100;
+        local touchableAreaSize = sizeImage*0.3;
         local a,b,c,d,e,f,g,h,t2,x
         local t1, t2
         local yA, yB, yC
         local scala1, scalaP
+        local showTouchableArea = false;
         
         --Atribuições
         a = display.contentHeight * 0.1
@@ -224,10 +232,25 @@ function new()
             image.y = yA
             image.xScale = (scala1 * t1) / 100
             image.yScale = (scala1 * t1) / 100
+            local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
+            touchableArea:setReferencePoint(display.CenterReferencePoint);
+            if(showTouchableArea == true) then
+                touchableArea:setFillColor(0,255,100,255);
+            else
+               touchableArea:setFillColor(0,255,100,0);
+            end 
+            touchableArea.x = x;
+            touchableArea.y = yA;
             if(scala1 > 0) then
-                group:insert(image);
-                image.touch = onDragAndDropImage;
-                image:addEventListener("touch", image);
+                local thumbGroup = display.newGroup();
+                thumbGroup:insert(image);
+                thumbGroup:insert(touchableArea);
+                touchableArea.image = image;
+                touchableArea.group = thumbGroup;
+                group:insert(thumbGroup);
+                inMemDB:insertIntoProdTable(image.x,image.y,listProds[i].title);
+                touchableArea.touch = onDragAndDropImage;
+                touchableArea:addEventListener("touch", touchableArea);
                 image.product = listProds[i];
             end
                       
@@ -241,10 +264,25 @@ function new()
                 image.y = yB
                 image.xScale = (scala1 * t1) / 100
                 image.yScale = (scala1 * t1) / 100
+                local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
+                touchableArea:setReferencePoint(display.CenterReferencePoint);
+                if(showTouchableArea == true) then
+                    touchableArea:setFillColor(0,255,100,255);
+                else
+                   touchableArea:setFillColor(0,255,100,0);
+                end 
+                touchableArea.x = x;
+                touchableArea.y = yB;
                 if(scala1 > 0) then
-                    group:insert(image);
-                    image.touch = onDragAndDropImage;
-                    image:addEventListener("touch", image);
+                    local thumbGroup = display.newGroup();
+                    thumbGroup:insert(image);
+                    thumbGroup:insert(touchableArea);
+                    touchableArea.image = image;
+                    touchableArea.group = thumbGroup;
+                    group:insert(thumbGroup);
+                    inMemDB:insertIntoProdTable(image.x,image.y,listProds[i].title);
+                    touchableArea.touch = onDragAndDropImage;
+                    touchableArea:addEventListener("touch", touchableArea);
                     image.product = listProds[i];
                 end
                 i = i + 1
@@ -257,10 +295,25 @@ function new()
                     image.y = yC
                     image.xScale = (scala1 * t1) / 100
                     image.yScale = (scala1 * t1) / 100
+                    local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
+                    touchableArea:setReferencePoint(display.CenterReferencePoint);
+                    if(showTouchableArea == true) then
+                        touchableArea:setFillColor(0,255,100,255);
+                    else
+                       touchableArea:setFillColor(0,255,100,0);
+                    end 
+                    touchableArea.x = x;
+                    touchableArea.y = yC;                   
                     if(scala1 > 0) then
-                        group:insert(image);
-                        image.touch = onDragAndDropImage;
-                        image:addEventListener("touch", image);
+                        local thumbGroup = display.newGroup();
+                        thumbGroup:insert(image);
+                        thumbGroup:insert(touchableArea);
+                        touchableArea.image = image;
+                        touchableArea.group = thumbGroup;
+                        group:insert(thumbGroup);
+                        inMemDB:insertIntoProdTable(image.x,image.y,listProds[i].title);
+                        touchableArea.touch = onDragAndDropImage;
+                        touchableArea:addEventListener("touch", touchableArea);
                         image.product = listProds[i];
                     end
                     i = i + 1
@@ -278,6 +331,7 @@ function new()
         scrollView.colunas = colunas;
         scrollView.x = 0;
         scrollView.y = 0;
+        inMemDB:searchByName("teste");
     end
     
     return home;

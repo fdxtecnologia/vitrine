@@ -52,8 +52,6 @@ function scene:enterScene( event )
         local json = require("json");
         local body = "marketId=3";--Params para a requisição //Ex. "<var>=<value>&<var2>=<value2>&.."
         local listProds;
-        local DB = require("scripts.Utils.cartDB").new();
-        DB:initDB();
         local path = system.pathForFile( "products.json");
 
         local file = io.open( path, "r" )

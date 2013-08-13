@@ -31,7 +31,9 @@ function new()
 		--MUDAR QUANDO O LOGIN ESTIVER PRONTO
 		local curtomer_id = 1
 
-		local insertQuery = [[INSERT INTO test VALUES (NULL, 'cartJson','strDate', curtomer_id); ]];
+		local insertQuery = [[INSERT INTO test VALUES (NULL, ']]..cartJson..[[',']]..strDate..[[', ']]..curtomer_id..[['); ]];
+
+		db:exec(insertQuery);
 	end
 
 	return DB;

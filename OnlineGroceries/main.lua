@@ -1,5 +1,7 @@
 local storyboard = require("storyboard");
 local Urls = require("scripts.Utils.Urls");
+DB = require("scripts.Utils.DB").new();
+inMemDB = require("scripts.Utils.InMemDB").new();
 
 function main()
     
@@ -10,4 +12,6 @@ function main()
       
 end
 
+inMemDB:initDB();
+DB:initDB();
 main();

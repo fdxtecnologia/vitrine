@@ -10,6 +10,16 @@ settings = {
 		plist=
 		{
 			UIStatusBarHidden=true,
+			FacebookAppID = "392039104231402",
+			CFBundleURLTypes =
+	         {
+	            {
+	               CFBundleURLSchemes =
+	               {
+	                  "fb392039104231402",
+	               }
+	            }
+	         }
 		},
 	},
 	android =

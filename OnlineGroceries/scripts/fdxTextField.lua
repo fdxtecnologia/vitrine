@@ -2,40 +2,37 @@ module(...,package.seeall);
 
 function new(x,y,width,height)
 
-	local fdxTextField = display.newGroup();
-	local fakeTextField = display.newRect(0,0,width,height);
-	fdxTextField.x = x;
-	fdxTextField.y = y;
-	fdxTextField:insert(fakeTextField);
+ local fdxTFGroup = display.newGroup()
+ local fdxTFContainer = display.newRect(x, y, width, height)
+ local fdxTFValue = ""
 
-	local function onRealTextFieldTouch(self,event)
+ --listener para o nativeTextField criado
+ local function onTouchTextFieldListener(self, event)
+  local phase = event.phase;
+  if phase == "userInput" then
+   native.setKeyboardFocus(self);
+  elseif phase == "ended" then
+   native.setKeyboardFocus(nil);
+   self:removeSelf();
+  end
+ end
 
-		local phase = event.phase;
 
-		if phase == "userInput" then
-			native.setKeyboardFocus(self);
-		elseif phase == "ended" then
-			native.setKeyboardFocus(nil);
-			self:removeSelf();
-		end
-	end
+ --listener para o container (fake)
+ local function onTouchContainerListener(self, event)
+  local phase = event.phase;
+	if phase == "began" then
+   local nativeTextField = native.newTextField(x, y, width, height);
+   nativeTextField.userInput = onTouchTextFieldListener;
+   nativeTextField:addEventListener("userInput", nativeTextField)
+   fdxTFGroup:insert(nativeTextField)
+  end
+  return true;
+ end
 
-	local function onTouchFakeTextField(self,event)
+ fdxTFContainer.touch = onTouchContainerListener
+ fdxTFContainer:addEventListener("touch", fdxTFContainer)
 
-		local phase = event.phase;
-		print("TOUCHH TEXT")
-		if phase == "began" then
-			print("HAHA");
-			local realTextField = native.newTextField(self.x, self.y, self.width, self.height);
-			realTextField.userInput = onRealTextFieldTouch;
-			realTextField:addEventListener("userInput", realTextField);
-			fdxTextField:insert(realTextField);
-		end
-		return true;
-	end
-	
-	fakeTextField.touch = onTouchFakeTextField;
-	fakeTextField:addEventListener("touch", fakeTextField);
-	print("TEXT FIELD")
-	return fdxTextField;
+ fdxTFGroup:insert(fdxTFContainer)
+ return fdxTFContainer
 end

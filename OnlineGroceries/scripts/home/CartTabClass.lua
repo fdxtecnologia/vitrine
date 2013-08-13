@@ -38,7 +38,8 @@ function new()
             gCart:remakeTable();
             gCart:refreshSubtotal();
             saver.saveValue("cart", cart);
-        end   
+        end
+        return true;   
     end
 
     function gCart:tableRefresh()
@@ -65,6 +66,7 @@ function new()
             gCart:refreshSubtotal();
             saver.saveValue("cart", cart);
         end
+        return true;
     end
 
     local function onTouchMinusProduct(self,event)
@@ -80,6 +82,7 @@ function new()
             end
             saver.saveValue("cart", cart);
         end
+        return true;
     end
     
     
@@ -167,19 +170,17 @@ function new()
         local row = event.target;
         
         if phase == "swipeRight" then
-            print("ROW SWIPE RIGHT"..row.index);
             if(row.isEditOpen==true)then
                 transition.to(row, {time=80, x=row.x + (row.contentHeight*3)});
                 row.isEditOpen = false;
             end
         elseif phase == "swipeLeft" then
-            print("ROW SWIPE LEFT"..row.index);
             if(row.isEditOpen == false)then
                 transition.to(row, {time=80, x=row.x - (row.contentHeight*3)});
                 row.isEditOpen = true;
             end
         end
-        
+        return true;
     end
 
     cart.subtotal = 0;
@@ -194,7 +195,7 @@ function new()
     
     --Botão Checkout
     local gCheckOutBtn = display.newGroup();
-    local checkOutBtn = display.newRect(gCheckOutBtn, 0, 0, display.contentWidth*0.12, display.contentHeight*0.166);
+    local checkOutBtn = display.newRect(gCheckOutBtn, 0, 0, display.contentWidth*0.12, display.contentHeight*0.1);
     checkOutBtn:setFillColor(0,255,120,255);
     local checkOutText = display.newText(gCheckOutBtn, "Checkout", 0, 0, "Helvetica", 13);
     checkOutText:setReferencePoint(display.CenterReferencePoint);
@@ -249,6 +250,7 @@ function new()
 
     function gCart:remakeTable()
 
+
         local isRepeated = false;
         local isCategory = false
         local rowHeight = display.contentHeight*0.2;
@@ -257,6 +259,7 @@ function new()
             default = { 0, 0, 0 },
         }
         local lineColor = { 0, 0, 0 }
+
 
         gCart.tableView:removeSelf();
         gCart.tableView = nil;
@@ -281,7 +284,7 @@ function new()
                 rowColor = rowColor,
                 lineColor = lineColor,
             } 
-        end        
+        end       
     end
     
     function gCart:refreshList()
