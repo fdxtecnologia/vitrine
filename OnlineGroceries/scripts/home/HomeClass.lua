@@ -110,8 +110,6 @@ function new()
         -- searchGroup:insert(spotlightImg);
 
         local textField = require("scripts.fdxTextField").new(0,0,display.contentWidth*0.5,display.contentHeight*0.05);
-        textField.x = 0;
-        textField.y = 0;
 
         gCart.prod = prod_listener
         gCart.listProdY = 0;
