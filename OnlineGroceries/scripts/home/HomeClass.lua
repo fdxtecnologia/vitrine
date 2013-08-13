@@ -154,6 +154,7 @@ function new()
             gThumb.markY = gThumb.y;
             self.isFocus = true;
             gThumb:toFront();
+            gCol:toFront();
         end
         if(self.isFocus == true) then
             if(event.phase=="moved")then
