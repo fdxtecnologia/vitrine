@@ -53,7 +53,6 @@ function new()
             self.startX= event.x
             display.getCurrentStage():setFocus(self)
             self.isFocus = true;
-            self:toFront();
         end
         if(self.isFocus == true) then
             if event.phase == "moved" then
@@ -87,10 +86,20 @@ function new()
     --Cada letra da busca dispara esse evento **AUTO-COMPLETE HANDLER**
     local function onEachLetters(self,event)
         local phase = event.type;
-        local carousel = self.parent;
+        local parentGroup = self.parent;
+        local carousel = parentGroup.carousel;
 
         if phase == "editing" then
             --Aqui deve ser feita a pesquisa e mover o scrollbar para posição X armazenada no banco
+            local resultSet = inMemDB:searchByName(event.text, 1);
+            if(#resultSet < 1 ) then
+                print("Nenhum resultado");
+            else
+                local name = resultSet[1].nameProduct;
+                local posX = resultSet[1].posX; 
+
+                carousel.x = posX*(-1);
+            end
         end
     end
     
@@ -261,7 +270,7 @@ function new()
                 touchableArea.image = image;
                 touchableArea.group = thumbGroup;
                 group:insert(thumbGroup);
-                inMemDB:insertIntoProdTable(image.x,image.y,listProds[i].title);
+                inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
                 touchableArea.touch = onDragAndDropImage;
                 touchableArea:addEventListener("touch", touchableArea);
                 image.product = listProds[i];
@@ -293,7 +302,7 @@ function new()
                     touchableArea.image = image;
                     touchableArea.group = thumbGroup;
                     group:insert(thumbGroup);
-                    inMemDB:insertIntoProdTable(image.x,image.y,listProds[i].title);
+                    inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
                     touchableArea.touch = onDragAndDropImage;
                     touchableArea:addEventListener("touch", touchableArea);
                     image.product = listProds[i];
@@ -324,7 +333,7 @@ function new()
                         touchableArea.image = image;
                         touchableArea.group = thumbGroup;
                         group:insert(thumbGroup);
-                        inMemDB:insertIntoProdTable(image.x,image.y,listProds[i].title);
+                        inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
                         touchableArea.touch = onDragAndDropImage;
                         touchableArea:addEventListener("touch", touchableArea);
                         image.product = listProds[i];
@@ -344,7 +353,6 @@ function new()
         scrollView.colunas = colunas;
         scrollView.x = 0;
         scrollView.y = 0;
-        inMemDB:searchByName("teste");
     end
     
     return home;

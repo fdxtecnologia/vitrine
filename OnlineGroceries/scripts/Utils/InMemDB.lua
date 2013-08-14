@@ -20,16 +20,22 @@ function new()
 
 		db:exec([[
 			INSERT INTO prodPosSession VALUES(NULL, ']]..posX..[[',']]..posY..[[',']]..nameProd..[[');
-		]])
-		print("ERRO:",db:error_message());
+		]]);
 	end
 
-	function inMemDB:searchByName(str)
-		print( "version " .. sqlite3.version() )
+	function inMemDB:searchByName(text,limit)
+		print( "version " .. sqlite3.version() );
+		local resultSet = {};
 
-		for row in db:nrows("SELECT * FROM prodPosSession") do
-			print(row.posX);
+		local str = text.."%";
+
+		local searchQueryStr = [[SELECT * FROM prodPosSession WHERE nameProduct LIKE ']]..str..[[' LIMIT ]]..limit..[[;]]
+
+		for row in db:nrows(searchQueryStr) do
+			table.insert(resultSet,row);
 		end
+		print("ERRO:",db:error_message());
+		return resultSet;
 	end
 	
 	return inMemDB;

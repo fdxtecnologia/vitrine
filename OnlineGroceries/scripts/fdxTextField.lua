@@ -2,10 +2,9 @@ module(...,package.seeall);
 
 function new(x,y,width,height,placeholder,align)
 
-    local fdxTFGroup = display.newGroup();
     local fakeTFGroup = display.newGroup();
     local fdxTFContainer = display.newRect(x, y, width, height);
-    local fdxTFText = display.newText(fdxTFGroup, placeholder, x+display.contentWidth*0.02, y,width,height,system.nativeFont,display.contentHeight*0.04);
+    local fdxTFText = display.newText(placeholder, x+display.contentWidth*0.02, y,width,height,system.nativeFont,display.contentHeight*0.04);
     local isShowingNative = false;
     fdxTFText:setTextColor(200,200,200);
 
@@ -21,6 +20,7 @@ function new(x,y,width,height,placeholder,align)
           fdxTFText.text = self.text;
           native.setKeyboardFocus(nil);
           display.getCurrentStage():setFocus(nil);
+          isShowingNative = false;
         elseif phase == "ended" then
           native.setKeyboardFocus(nil);
           if(self.text == "") then
@@ -40,7 +40,7 @@ function new(x,y,width,height,placeholder,align)
             oldText = event.oldText,
             text = event.text
           }
-          fdxTFGroup:dispatchEvent(eventLetters);
+          fakeTFGroup:dispatchEvent(eventLetters);
         end
         return true;
     end
@@ -56,7 +56,7 @@ function new(x,y,width,height,placeholder,align)
             nativeTextField.align = align;
             nativeTextField.font = native.newFont( native.systemFontBold, height*1.1 )
             nativeTextField:addEventListener("userInput", nativeTextField);
-            fdxTFGroup:insert(nativeTextField);
+            fakeTFGroup:insert(nativeTextField);
             native.setKeyboardFocus(nativeTextField);
             isShowingNative = true;
           elseif phase == "ended" then
@@ -69,6 +69,5 @@ function new(x,y,width,height,placeholder,align)
     fakeTFGroup.touch = onTouchContainerListener;
     fakeTFGroup:addEventListener("touch", fakeTFGroup);
 
-    fdxTFGroup:insert(fdxTFContainer)
-    return fdxTFGroup;
+    return fakeTFGroup;
 end
