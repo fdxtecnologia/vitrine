@@ -33,6 +33,14 @@ function new(x,y,width,height,placeholder,align)
           isShowingNative = false;
         elseif phase == "editing" then
           print("Letra"..event.newCharacters);
+          local eventLetters = {
+            name = "letters",
+            type = "editing",
+            newCharacters = event.newCharacters,
+            oldText = event.oldText,
+            text = event.text
+          }
+          fdxTFGroup:dispatchEvent(eventLetters);
         end
         return true;
     end
@@ -62,5 +70,5 @@ function new(x,y,width,height,placeholder,align)
     fakeTFGroup:addEventListener("touch", fakeTFGroup);
 
     fdxTFGroup:insert(fdxTFContainer)
-    return fdxTFContainer
+    return fdxTFGroup;
 end

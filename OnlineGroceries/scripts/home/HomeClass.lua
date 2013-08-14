@@ -83,6 +83,16 @@ function new()
 
         return true;           
     end
+
+    --Cada letra da busca dispara esse evento **AUTO-COMPLETE HANDLER**
+    local function onEachLetters(self,event)
+        local phase = event.type;
+        local carousel = self.parent;
+
+        if phase == "editing" then
+            --Aqui deve ser feita a pesquisa e mover o scrollbar para posição X armazenada no banco
+        end
+    end
     
     --Construção do cenario
     function home:buildCenario(listProds,parentGroup)
@@ -109,7 +119,10 @@ function new()
 
         -- searchGroup:insert(spotlightImg);
 
-        local textField = require("scripts.fdxTextField").new((display.contentWidth*0.5)-(display.contentWidth*0.25),display.contentHeight*0.02,display.contentWidth*0.5,display.contentHeight*0.05,"Busca","center");
+        local textFieldSearch = require("scripts.fdxTextField").new((display.contentWidth*0.5)-(display.contentWidth*0.25),display.contentHeight*0.02,display.contentWidth*0.5,display.contentHeight*0.05,"Busca","center");
+        textFieldSearch.letters = onEachLetters;
+        textFieldSearch:addEventListener("letters",textFieldSearch);
+
 
         gCart.prod = prod_listener
         gCart.listProdY = 0;
@@ -121,7 +134,8 @@ function new()
         parentGroup:insert(gCart);
         parentGroup.gCart = gCart;
         parentGroup:insert(carousel);
-        parentGroup:insert(textField);
+        parentGroup:insert(textFieldSearch);
+        parentGroup.searchField = textFieldSearch;
         carousel.initX = carousel.x;
         parentGroup.carousel = carousel;
     end   
