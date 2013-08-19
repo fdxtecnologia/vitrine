@@ -98,7 +98,7 @@ function new()
                 local name = resultSet[1].nameProduct;
                 local posX = resultSet[1].posX; 
 
-                carousel.x = posX*(-1);
+                transition.to(carousel,{time=100, x=posX*(-1)});
             end
         end
     end

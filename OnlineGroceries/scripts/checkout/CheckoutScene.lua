@@ -3,7 +3,6 @@ local scene = storyboard.newScene();
 
 
 -- local forward references should go here --
-local cCheckout = require("scripts.checkout.CheckoutClass"):new();
 local cCart = require("scripts.cart.CartClass");
 
 ---------------------------------------------------------------------------------
@@ -13,7 +12,8 @@ local cCart = require("scripts.cart.CartClass");
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
     local group = self.view
-    display.setStatusBar( display.TranslucentStatusBar );
+    --display.setStatusBar();
+    local cCheckout = require("scripts.checkout.newCheckoutClass").new(group);
 end
 
 
@@ -28,7 +28,7 @@ end
 function scene:enterScene( event )
     local group = self.view
     local cart = cCart.new()
-    cCheckout:buildCheckout(group, cart)
+    --cCheckout:buildCheckout(group, cart)
 end
 
 

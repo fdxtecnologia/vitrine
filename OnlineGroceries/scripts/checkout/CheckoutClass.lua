@@ -29,15 +29,19 @@ function new()
 			width = display.contentWidth,
 			height = display.contentHeight - (titleGroup.contentHeight + display.statusBarHeight),
 			scrollHeight = 3000,
-			horizontalScrollDisabled = true
+			horizontalScrollDisabled = true,
+			backgroundColor = {125,125,125,255}
 		})
 		content:toBack()
+
 		--Endereço de entrega
-		local labelEndereco = display.newText(content, "Endereço", 10, 10, native.systemFont, 16)
-		labelEndereco:setTextColor(0,0,0)
-		content:insert(labelEndereco)
-		local inputEndereco = native.newTextField( 10, 30, display.contentWidth - 50, 30 )
-		content:insert(inputEndereco)
+		local labelEndereco = display.newText(content, "Endereço", 10, 10, native.systemFont, 16);
+		labelEndereco:setTextColor(0,0,0);
+		content:insert(labelEndereco);
+		--local textFieldSearch = require("scripts.fdxTextField").new((display.contentWidth*0.5)-(display.contentWidth*0.25),display.contentHeight*0.02,display.contentWidth*0.5,display.contentHeight*0.05,"Busca","center");
+		local inputEndereco = require("scripts.fdxTextField").new(10,30,display.contentWidth-50,30,"Endereço","center");
+		content:insert(inputEndereco);
+
 		--Horário
 		local labelHorario = display.newText(content, "Horário de Entrega", 10, 80, native.systemFont, 16)
 		labelHorario:setTextColor(0,0,0)
@@ -77,14 +81,16 @@ function new()
 		--Numero do Cartao
 		local labelNumCartao = display.newText("Número do Cartão de Crédito",10,210,system.nativeBoldFont, 16)
 		labelNumCartao:setTextColor(0,0,0)
-		content:insert(labelNumCartao)
-		local inputNumCartao = native.newTextField( 10, 240, display.contentWidth - 50, 30 )
+		content:insert(labelNumCartao);
+		local inputNumCartao = require("scripts.fdxTextField").new(10,240,display.contentWidth-50,30,"Numero Cartão","center");
+		--local inputNumCartao = native.newTextField( 10, 240, display.contentWidth - 50, 30 )
 		content:insert(inputNumCartao)
 		--Codigo Segurança
 		local labelCVV = display.newText("Código de Segurança",10,270,system.nativeBoldFont, 16)
 		labelCVV:setTextColor(0,0,0)
-		content:insert(labelCVV)
-		local inputCVV = native.newTextField( 10, 300, display.contentWidth - 50, 30 )
+		content:insert(labelCVV);
+		local inputCVV = require("scripts.fdxTextField").new(10,300,display.contentWidth-50,30,"Código de segurança","center");
+		--local inputCVV = native.newTextField( 10, 300, display.contentWidth - 50, 30 )
 		content:insert(inputCVV)
 		--Validade
 		local labelValidade = display.newText("Validade",10,330,system.nativeBoldFont, 16)
@@ -94,9 +100,11 @@ function new()
 		local labelValidadeMes = display.newText("MM",10,360,system.nativeBoldFont, 16)
 		labelValidadeMes:setTextColor(0,0,0)
 		local labelValidadeAno = display.newText("AA",50,360,system.nativeBoldFont, 16)
-		labelValidadeAno:setTextColor(0,0,0)
-		local inputValidadeMes = native.newTextField( 10, 380, 30, 30 )
-		local inputValidadeAno = native.newTextField( 50, 380, 30, 30 )
+		labelValidadeAno:setTextColor(0,0,0);
+		local inputValidadeMes = require("scripts.fdxTextField").new(10,380,30,30,"Mês","center");
+		--local inputValidadeMes = native.newTextField( 10, 380, 30, 30 )
+		local inputValidadeAno = require("scripts.fdxTextField").new(50,380,30,30,"Ano","center");
+		--local inputValidadeAno = native.newTextField( 50, 380, 30, 30 )
 		content:insert(labelValidadeMes)
 		content:insert(labelValidadeAno)
 		content:insert(inputValidadeMes)
@@ -104,10 +112,11 @@ function new()
 		
 		-- Titular do Cartão
 		local labelTitular = display.newText("Titular do Cartão",10,410,system.nativeBoldFont, 16)
-		labelTitular:setTextColor(0,0,0)
-		content:insert(labelTitular)
-		local inputTitular = native.newTextField( 10, 440, display.contentWidth - 50, 30 )
-		content:insert(inputTitular)
+		labelTitular:setTextColor(0,0,0);
+		content:insert(labelTitular);
+		local inputTitular = require("scripts.fdxTextField").new(10,440,display.contentWidth - 50,30,"Titular","center");
+		--local inputTitular = native.newTextField( 10, 440, display.contentWidth - 50, 30 )
+		content:insert(inputTitular);
 		
 		--Botao de Picker do horário
 		local function handleButtonConcluir( event )
