@@ -6,9 +6,9 @@ function new()
     
     --Definitions
     local gCart = display.newGroup();
-    gCart.x = 0;
-    gCart.y = display.contentHeight;
-    local pullTab = display.newCircle(gCart, display.contentWidth*0.5, 0, 25);
+    gCart.x = display.contentWidth;
+    gCart.y = 0;
+    local pullTab = display.newCircle(gCart,0, display.contentHeight*0.1, 25);
     local cart = {products={}};
     pullTab:setFillColor(125, 125, 125, 255); 
     local widget = require( "widget" );
@@ -18,9 +18,7 @@ function new()
 
     --Navigate to CheckOut
     local function onCheckOutTouch(self,event)
-        
-        storyboard.gotoScene("scripts.checkout.CheckoutScene");
-        
+        storyboard.gotoScene("scripts.checkout.CheckoutScene");    
     end
     
     --Handle Deletebutton
@@ -100,23 +98,25 @@ function new()
         rowImg.x = row.contentWidth*0.02;
         rowImg.y = row.contentHeight*0.05;
         
-        local rowQty = display.newText(row, "Quantidade: "..product.quantity, 0,0, "Helvetica", 14);
+        local rowQty = display.newText(row, "Quantidade: "..product.quantity, 0,0, "Helvetica", display.contentWidth*0.02);
         rowQty:setReferencePoint(display.CenterReferencePoint);
-        rowQty.x = row.contentWidth*0.5;
+        rowQty.x = row.contentWidth*0.47;
         rowQty.y = row.contentHeight*0.75;
         row.rowQty = rowQty;
         
-        local rowTitle = display.newText(row,product.title, 0, 0, "Helvetica", 15);
+        local rowTitle = display.newText(row,product.title, 0, 0, "Helvetica", display.contentWidth*0.02);
         rowTitle:setReferencePoint(display.CenterReferencePoint);
-        rowTitle.x = row.contentWidth*0.5;
+        rowTitle.x = row.contentWidth*0.47;
         rowTitle.y = row.contentHeight*0.5;
         
-        local rowPrice = display.newText(row,"R$ "..product.totalPrice, 0, 0, "Helvetica", 16);
+        local rowPrice = display.newText(row,"R$ "..product.totalPrice, 0, 0, "Helvetica", display.contentWidth*0.025);
         rowPrice:setReferencePoint(display.CenterRightReferencePoint);
-        rowPrice.x = row.contentWidth - rowQty.contentWidth*0.1;
+        rowPrice.x = row.contentWidth - row.contentWidth*0.1;
         rowPrice.y = row.contentHeight*0.5;
         row.rowPrice = rowPrice;
-        
+
+        local btnsProdOptions = display.newGroup();
+
         --Minus item button
         local gMinusBtn = display.newGroup();
         local minusBtn = display.newRect(gMinusBtn,0, 0,row.contentHeight*0.97, row.contentHeight*0.97);
@@ -125,7 +125,7 @@ function new()
         minusText:setReferencePoint(display.CenterReferencePoint);
         minusText.x = minusBtn.width*0.5;
         minusText.y = minusBtn.height*0.5;
-        gMinusBtn.x = row.contentWidth;
+        gMinusBtn.x = 0;
         gMinusBtn.row = row;
         gMinusBtn.touch = onTouchMinusProduct;
         gMinusBtn:addEventListener("touch", gMinusBtn);
@@ -138,7 +138,7 @@ function new()
         plusText:setReferencePoint(display.CenterReferencePoint);
         plusText.x = plusBtn.width*0.5;
         plusText.y = plusBtn.height*0.5;
-        gPlusBtn.x = minusBtn.width+row.contentWidth;
+        gPlusBtn.x = minusBtn.width;
         gPlusBtn.row = row;
         gPlusBtn.product = product;
         gPlusBtn.touch = onTouchPlusProduct;
@@ -152,17 +152,24 @@ function new()
         deleteText:setReferencePoint(display.CenterReferencePoint);
         deleteText.x = deleteBtn.width*0.5;
         deleteText.y = deleteBtn.height*0.5;
-        gDeleteBtn.x = plusBtn.width + minusBtn.width +row.contentWidth;
+        gDeleteBtn.x = plusBtn.width + minusBtn.width;
         gDeleteBtn.row = row;
         gDeleteBtn.product = product;
         gDeleteBtn.touch = onTouchDeleteProduct;
         gDeleteBtn:addEventListener("touch",gDeleteBtn);
         
         row.isEditOpen = false;
-        
-        row:insert(gMinusBtn);
-        row:insert(gPlusBtn);
-        row:insert(gDeleteBtn);    
+
+        btnsProdOptions:insert(gMinusBtn);
+        btnsProdOptions:insert(gPlusBtn);
+        btnsProdOptions:insert(gDeleteBtn);
+
+        btnsProdOptions:setReferencePoint(display.TopLeftReferencePoint);
+        btnsProdOptions.x = row.contentWidth;
+        row.btnsProdOptions = btnsProdOptions;
+
+
+        row:insert(btnsProdOptions);  
     end
     
     local function onRowTouch(event)
@@ -171,12 +178,13 @@ function new()
         
         if phase == "swipeRight" then
             if(row.isEditOpen==true)then
-                transition.to(row, {time=80, x=row.x + (row.contentHeight*3)});
+                transition.to(row.btnsProdOptions, {time=80, x=row.btnsProdOptions.x + row.btnsProdOptions.width*1.2});
                 row.isEditOpen = false;
             end
         elseif phase == "swipeLeft" then
             if(row.isEditOpen == false)then
-                transition.to(row, {time=80, x=row.x - (row.contentHeight*3)});
+                row.btnsProdOptions:setReferencePoint(display.TopRightReferencePoint);
+                transition.to(row.btnsProdOptions, {time=80, x=row.btnsProdOptions.x - row.btnsProdOptions.width*1.2});
                 row.isEditOpen = true;
             end
         end
@@ -185,14 +193,17 @@ function new()
 
     cart.subtotal = 0;
 
-    local topTab = display.newRect(0, 0, display.contentWidth, display.contentHeight*0.1);
+    local topTab = display.newRect(0, 0, display.contentWidth*0.06, display.contentHeight);
     topTab:setFillColor(125, 125, 125, 255);
     
     local totalTab = display.newRect(0,0, display.contentWidth, display.contentHeight*0.1);
     totalTab:setReferencePoint(display.BottomLeftReferencePoint);
     totalTab.y = display.contentHeight;
     totalTab:setFillColor(125, 125, 125, 255);
-    
+
+    print("topTab WIDTH ", topTab.width)
+
+
     --Botão Checkout
     local gCheckOutBtn = display.newGroup();
     local checkOutBtn = display.newRect(gCheckOutBtn, 0, 0, display.contentWidth*0.12, display.contentHeight*0.1);
@@ -213,17 +224,20 @@ function new()
     totalText.y = display.contentHeight - display.contentHeight*0.01;
     
     local tableView = widget.newTableView{
-        top=topTab.height,
-        width = display.contentWidth,
-        height = display.contentHeight-topTab.height-totalTab.height,
+        top=0,
+        left = topTab.width;
+        width = display.contentWidth - topTab.width,
+        height = display.contentHeight-totalTab.height,
         listener = tableViewListener,
         onRowRender = onRowRender,
         onRowTouch = onRowTouch
     }
+
     
     gCart.tableView = tableView;
     gCart.cart = cart;
     gCart:insert(tableView);
+    tableView:toFront();
     gCart:insert(topTab);
     gCart:insert(totalTab);
     gCart:insert(gCheckOutBtn);
@@ -265,13 +279,17 @@ function new()
         gCart.tableView = nil;
 
         local newTableView = widget.newTableView{
-            top=topTab.height,
+            top=0,
+            left=topTab.width,
             width = display.contentWidth,
-            height = display.contentHeight-topTab.height-totalTab.height,
+            height = display.contentHeight-totalTab.height,
             listener = tableViewListener,
             onRowRender = onRowRender,
             onRowTouch = onRowTouch
         }
+
+        local mask = graphics.newMask("images/mask.png");
+        print("MASK WIDTH ", mask);
 
         gCart:insert(1,newTableView);
         gCart.tableView = newTableView;
@@ -284,7 +302,9 @@ function new()
                 rowColor = rowColor,
                 lineColor = lineColor,
             } 
-        end       
+        end
+
+        gCart:refreshSubtotal();       
     end
     
     function gCart:refreshList()

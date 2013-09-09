@@ -28,6 +28,14 @@ function new(parentGroup,x,y,qtyPage,orientation)
 		selectedCircle.y = pageActualIndex.y;
 	end
 
+	function pageControl:getCurrentPage()
+		for j=1, #pages do
+			if(selectedCircle.x == pages[j].x)then
+				return j;
+			end
+		end
+	end
+
 	pageControlGroup:insert(selectedCircle);
 
 	--pageControlGroup:setReferencePoint(display.TopLeftReferencePoint);

@@ -3,6 +3,8 @@ module(...,package.seeall);
 function new()
     
     local home = {};
+
+    local numImagesPerCol = 2;
     
     local function onDragGCart(self,event)
         local phase = event.phase;
@@ -17,15 +19,15 @@ function new()
         end
         if (self.isFocus == true) then
             if phase == "moved" then
-                movedY = event.y - self.startY;
-                self.y = self.y + movedY;
-                self.startY = event.y;
+                movedX = event.x - self.startX;
+                self.x = self.x + movedX;
+                self.startX = event.x;
             elseif phase == "ended" then
-                    if(self.y <= display.contentHeight*0.5)then
-                        self.y = 0;
+                    if(self.x <= display.contentWidth*0.5)then
+                        self.x = 0;
                     else
-                        self.y = display.contentHeight;
-                        self:toBack();
+                        self.x = display.contentWidth;
+                        --self:toBack();
                     end
                 display.getCurrentStage():setFocus(nil);
                 self.isFocus = nil;
@@ -37,12 +39,12 @@ function new()
     -- Evento que trata a aba do carrinho
     local function prod_listener(self,event)
         if(event.type == "selected")then
-            transition.to(self, {time = 100, y=self.y-display.contentHeight*0.1});
+            transition.to(self, {time = 100, x=self.x-display.contentWidth*0.2});
         elseif(event.type == "added")then
             self:addToList(event.product);
-            transition.to(self, {time = 100, y=self.y+display.contentHeight*0.1});
+            transition.to(self, {time = 100, x=self.x+display.contentWidth*0.2});
         elseif(event.type == "release")then
-            transition.to(self, {time = 100, y=self.y+display.contentHeight*0.1});
+            transition.to(self, {time = 100, x=self.x+display.contentWidth*0.2});
         end
     end
     
@@ -61,16 +63,14 @@ function new()
                 self.startX = event.x
 
                 local teste = self.width + self.x;
-                print("POSICAO TESTE: --- "..teste)
+                print("POSICAO TESTE: --- "..self.x)
                 if teste < display.contentWidth then
                     if(self.finalX == nil)then
                         self.finalX = self.x;
+                        print("FINAL X", self.finalX," WIDTH ",self.width - display.contentWidth);
                     end
                     transition.to(self, { time=100,x=self.finalX})
                 end
-
-                local group = self.colunas[1];
-                print("Coluna 1:",group[1]);
             elseif event.phase == "ended" then
                 if self.x > self.initX then
                     transition.to(self, { time=100,x=self.initX})
@@ -104,31 +104,21 @@ function new()
     end
     
     --Construção do cenario
-    function home:buildCenario(listProds,parentGroup)
+    function home:buildCenario(listProds,parentGroup,numColunas)
         --Taxa de incremento da escala
-        local t3 = 0.95;
         
+        numImagesPerCol = numColunas;
+
         local gCart = require("scripts.home.CartTabClass").new();     
         
-        local carousel = display.newGroup();     
+        local carousel = display.newGroup(); 
         
         home:createThumbProd(listProds,carousel);
 
         carousel.touch = onTouch;
         carousel:addEventListener("touch", carousel);
 
-        -- local searchGroup = display.newGroup();
-        -- local spotlightImg = display.newImage("images/spotlight.png");
-        -- spotlightImg.x = 0;
-        -- spotlightImg.y = 0;
-        -- spotlightImg.width = display.contentHeight*0.08;
-        -- spotlightImg.height = display.contentHeight*0.08;
-        -- spotlightImg.touch = onSearchTouch;
-        -- spotlightImg:addEventListener("touch",spotlightImg);
-
-        -- searchGroup:insert(spotlightImg);
-
-        local textFieldSearch = require("scripts.fdxTextField").new((display.contentWidth*0.5)-(display.contentWidth*0.25),display.contentHeight*0.02,display.contentWidth*0.5,display.contentHeight*0.05,"Busca","center");
+        local textFieldSearch = require("scripts.fdxTextField").new((display.contentWidth*0.5)-(display.contentWidth*0.25),display.contentHeight*0.02,display.contentWidth*0.5,display.contentHeight*0.08,"Busca","center");
         textFieldSearch.letters = onEachLetters;
         textFieldSearch:addEventListener("letters",textFieldSearch);
 
@@ -140,9 +130,9 @@ function new()
         gCart.touch = onDragGCart;
         gCart:addEventListener("touch",gCart);
 
-        parentGroup:insert(gCart);
         parentGroup.gCart = gCart;
         parentGroup:insert(carousel);
+        parentGroup:insert(gCart);
         parentGroup:insert(textFieldSearch);
         parentGroup.searchField = textFieldSearch;
         carousel.initX = carousel.x;
@@ -161,7 +151,7 @@ function new()
         local gCarousel = gCol.parent;
         local parentGroup = gCarousel.parent;      
         local gCart = parentGroup.gCart;
-        local image = self.image;
+        local image = gThumb[2];
 
         if(event.phase=="began")then
             local event = {
@@ -171,19 +161,19 @@ function new()
             print("Began");
             display.getCurrentStage():setFocus(self);
             gCart:dispatchEvent(event);
-            gThumb.markX = gThumb.x;
-            gThumb.markY = gThumb.y;
+            image.markX = image.x;
+            image.markY = image.y;
             self.isFocus = true;
             gThumb:toFront();
             gCol:toFront();
         end
         if(self.isFocus == true) then
             if(event.phase=="moved")then
-                    local x = (event.x - event.xStart) + gThumb.markX;
-                    local y = (event.y - event.yStart) + gThumb.markY;
-                    gThumb.x, gThumb.y = x,y;
+                    local x = (event.x - event.xStart) + image.markX;
+                    local y = (event.y - event.yStart) + image.markY;
+                    image.x, image.y = x,y;
             elseif(event.phase=="ended")then
-                    if(event.y >= gCart.y)then
+                    if(event.x >= gCart.x)then
                         print("ADDED");
                         local event = {
                             name = "prod",
@@ -198,8 +188,8 @@ function new()
                         }
                         gCart:dispatchEvent(event)
                     end
-                gThumb.x = gThumb.markX;
-                gThumb.y = gThumb.markY;
+                image.x = image.markX;
+                image.y = image.markY;
                 print("SET FOCUS NIL");
                 display.getCurrentStage():setFocus(nil);
                self.isFocus = nil;
@@ -210,113 +200,47 @@ function new()
     
     -- Cria perspectiva
     function home:createThumbProd(listProds,scrollView)
-        
-        --COMEÇANDO
-        local sizeImage = 100;
-        local touchableAreaSize = sizeImage*0.3;
-        local a,b,c,d,e,f,g,h,t2,x
-        local t1, t2
-        local yA, yB, yC
-        local scala1, scalaP
-        local showTouchableArea = false;
-        
-        --Atribuições
-        a = display.contentHeight * 0.1
-        b = display.contentHeight * 0.35
-        c = display.contentHeight * 0.6
-        d = display.contentHeight * 0.85
-        e=a
-        --e = display.contentHeight * 0.05
-        --f = display.contentHeight * 0.1
-        f=b
-        --g = display.contentHeight * 0.15
-        g=c
-        --h = display.contentHeight * 0.2
-        h=d
-        x = 0
-        
-        --T1 Multiplica a escala
-        t1 = 1
-        scala1 =   -((((e - a + b - f) / display.contentWidth) * x) + (a - b))
-        x = scala1 * 0.6;
-        -- T2 multiplica o passo de X
-        t2 = 1.2
-        -- 
-        local i = 1
-        local numColunas = 1;
+
+        local i = 1;
+        local sizeBackGround = (display.contentHeight*0.8)/numImagesPerCol;
+        local sizeImage = (display.contentHeight*0.64)/numImagesPerCol;
+        local xThumb = 0;
+        local prodIndex = 1;
         local colunas={};
-        while i <=#listProds do
-            local group = display.newGroup();
-            local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
-            yA = (((((e+f)/2) - ((a+b)/2)) / display.contentWidth) * x) + (( a + b)/2)
-            scala1 =  - ((((e - a + b - f) / display.contentWidth) * x) + (a - b))
-            image.x = x
-            image.y = yA
-            image.xScale = (scala1 * t1) / 100
-            image.yScale = (scala1 * t1) / 100
-            local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
-            touchableArea:setReferencePoint(display.CenterReferencePoint);
-            if(showTouchableArea == true) then
-                touchableArea:setFillColor(0,255,100,255);
-            else
-               touchableArea:setFillColor(0,255,100,0);
-            end 
-            touchableArea.x = x;
-            touchableArea.y = yA;
-            if(scala1 > 0) then
-                local thumbGroup = display.newGroup();
-                thumbGroup:insert(image);
-                thumbGroup:insert(touchableArea);
-                touchableArea.image = image;
-                touchableArea.group = thumbGroup;
-                group:insert(thumbGroup);
-                inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
-                touchableArea.touch = onDragAndDropImage;
-                touchableArea:addEventListener("touch", touchableArea);
-                image.product = listProds[i];
-            end
-                      
-            i = i + 1
-            
-            if(i<=#listProds)then
-                local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
-                yB = (((((f + g)/2) - ((b + c)/2)) / display.contentWidth) * x) + ((b + c)/2)
-                scala1 =  - ((((e - a + b - f) / display.contentWidth) * x) + (a - b))
-                image.x = x
-                image.y = yB
-                image.xScale = (scala1 * t1) / 100
-                image.yScale = (scala1 * t1) / 100
-                local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
-                touchableArea:setReferencePoint(display.CenterReferencePoint);
-                if(showTouchableArea == true) then
-                    touchableArea:setFillColor(0,255,100,255);
-                else
-                   touchableArea:setFillColor(0,255,100,0);
-                end 
-                touchableArea.x = x;
-                touchableArea.y = yB;
-                if(scala1 > 0) then
+        local qtdProd = math.ceil(#listProds/numImagesPerCol);
+        local touchableAreaSize = sizeImage*0.3;
+        local showTouchableArea = false;
+
+        print("qtdProd ",qtdProd);
+        while i<= qtdProd do 
+
+            local yThumb = display.contentHeight*0.2;
+            local coluna = display.newGroup();
+
+            for j=1, numImagesPerCol do
+                if(listProds[prodIndex] == nil) then
                     local thumbGroup = display.newGroup();
-                    thumbGroup:insert(image);
-                    thumbGroup:insert(touchableArea);
-                    touchableArea.image = image;
-                    touchableArea.group = thumbGroup;
-                    group:insert(thumbGroup);
-                    inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
-                    touchableArea.touch = onDragAndDropImage;
-                    touchableArea:addEventListener("touch", touchableArea);
-                    image.product = listProds[i];
-                end
-                i = i + 1
-            
-                if(i<=#listProds)then
-                    local image = display.newImageRect("images/produtos/"..listProds[i].sku..".jpg",sizeImage,sizeImage,true);
-                    yC = (((((g+h)/2) - ((c+d)/2)) / display.contentWidth) * x) + ((c + d)/2)
-                    scala1 =  - ((((e - a + b - f) / display.contentWidth) * x) + (a - b))
-                    image.x = x
-                    image.y = yC
-                    image.xScale = (scala1 * t1) / 100
-                    image.yScale = (scala1 * t1) / 100
+                    local background = display.newImageRect("images/Teste.png",sizeBackGround,sizeBackGround,true);
+                    background:setReferencePoint(display.TopLeftReferencePoint);
+                    background.x = 0;
+                    background.y = 0;
+                    thumbGroup.x = xThumb;
+                    thumbGroup.y = yThumb;
+                    thumbGroup:insert(background);
+                    coluna:insert(thumbGroup);
+                    yThumb = yThumb + sizeBackGround;
+                else
+                    local thumbGroup = display.newGroup();
+                    local background = display.newImageRect("images/Teste.png",sizeBackGround,sizeBackGround,true);
+                    background:setReferencePoint(display.TopLeftReferencePoint);
+                    background.x = 0;
+                    background.y = 0;
+                    local image = display.newImageRect("images/produtos/"..listProds[prodIndex].sku..".jpg",sizeImage,sizeImage,true);
+                    image:setReferencePoint(display.BottomCenterReferencePoint);
+                    image.x = sizeBackGround/2;
+                    image.y = (11/12)*sizeBackGround;
+                    image.product = listProds[prodIndex];
+
                     local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
                     touchableArea:setReferencePoint(display.CenterReferencePoint);
                     if(showTouchableArea == true) then
@@ -324,35 +248,189 @@ function new()
                     else
                        touchableArea:setFillColor(0,255,100,0);
                     end 
-                    touchableArea.x = x;
-                    touchableArea.y = yC;                   
-                    if(scala1 > 0) then
-                        local thumbGroup = display.newGroup();
-                        thumbGroup:insert(image);
-                        thumbGroup:insert(touchableArea);
-                        touchableArea.image = image;
-                        touchableArea.group = thumbGroup;
-                        group:insert(thumbGroup);
-                        inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
-                        touchableArea.touch = onDragAndDropImage;
-                        touchableArea:addEventListener("touch", touchableArea);
-                        image.product = listProds[i];
-                    end
-                    i = i + 1
+                    touchableArea.x = sizeBackGround/2;
+                    touchableArea.y = sizeBackGround/2;
+
+                    touchableArea.touch = onDragAndDropImage;
+                    touchableArea:addEventListener("touch", touchableArea);
+                    thumbGroup:insert(background);
+                    thumbGroup:insert(image);
+                    thumbGroup:insert(touchableArea);
+
+                    thumbGroup.x = xThumb;
+                    thumbGroup.y = yThumb;
+                    coluna:insert(thumbGroup);
+                    inMemDB:insertIntoProdTable(xThumb,yThumb,listProds[prodIndex].title);
+
+                    yThumb = yThumb + sizeBackGround;
+                    prodIndex = prodIndex +1;
                 end
             end
-            table.insert(colunas,group);
-            scrollView:insert(colunas[numColunas]);
-            numColunas=numColunas+1;
-            local bgCarousel = display.newRect(0,0,scrollView.width,scrollView.height);
-            bgCarousel:setFillColor(255,255,255,0);
-            scrollView:insert(1,bgCarousel);
-            --incrementando x
-            x = x + (scala1 * t2)
+            table.insert(colunas,coluna);
+            scrollView:insert(coluna);
+
+            xThumb = xThumb+sizeBackGround;
+            i = i +1;
         end
-        scrollView.colunas = colunas;
-        scrollView.x = 0;
-        scrollView.y = 0;
+
+        print("TAMANHO LIST PRODS", #listProds)
+
+        scrollView.x =0;
+        scrollView.y =0;
+
+        -- --COMEÇANDO
+        -- local sizeImage = 90;
+        -- local sizeBackGround = 100;
+        -- local touchableAreaSize = sizeImage*0.3;
+        -- local a,b,c,d,e,f,g,h,t2,x
+        -- local t1, t2
+        -- local yA, yB, yC
+        -- local scala1, scalaP
+        -- local showTouchableArea = false;
+        
+        -- --Atribuições
+        -- a = display.contentHeight * 0.1
+        -- b = display.contentHeight * 0.35
+        -- c = display.contentHeight * 0.6
+        -- d = display.contentHeight * 0.85
+        -- e=a
+        -- --e = display.contentHeight * 0.05
+        -- --f = display.contentHeight * 0.1
+        -- f=b
+        -- --g = display.contentHeight * 0.15
+        -- g=c
+        -- --h = display.contentHeight * 0.2
+        -- h=d
+        -- x = 0
+        
+        -- --T1 Multiplica a escala
+        -- t1 = 1
+        -- scala1 =   -((((e - a + b - f) / display.contentWidth) * x) + (a - b))
+        -- x = scala1 * 0.6;
+        -- -- T2 multiplica o passo de X
+        -- t2 = 1.23
+        -- -- 
+        -- local i = 1
+        -- local numColunas = 1;
+        -- local colunas={};
+        -- while i <=#listProds do
+        --     local group = display.newGroup();
+        --     sizeBackGround = ((1-0.2)*display.contentHeight)/3;
+        --     local background = display.newImageRect("images/Teste.png",sizeBackGround,sizeBackGround,true);
+        --     background.x = x;
+        --     local image = display.newImageRect("images/produtos/smirnoff.png",sizeImage,sizeImage,true);
+        --     yA = display.contentHeight*0.2;
+        --     image.x = x
+        --     image.y = yA
+        --     background.y = yA;
+        --     image.xScale = (scala1 * t1) / 100
+        --     image.yScale = (scala1 * t1) / 100
+        --     local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
+        --     touchableArea:setReferencePoint(display.CenterReferencePoint);
+        --     if(showTouchableArea == true) then
+        --         touchableArea:setFillColor(0,255,100,255);
+        --     else
+        --        touchableArea:setFillColor(0,255,100,0);
+        --     end 
+        --     touchableArea.x = x;
+        --     touchableArea.y = yA;
+        --     if(scala1 > 0) then
+        --         local thumbGroup = display.newGroup();
+        --         thumbGroup:insert(background);
+        --         thumbGroup:insert(image);
+        --         thumbGroup:insert(touchableArea);
+        --         touchableArea.image = image;
+        --         touchableArea.group = thumbGroup;
+        --         group:insert(thumbGroup);
+        --         inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
+        --         touchableArea.touch = onDragAndDropImage;
+        --         touchableArea:addEventListener("touch", touchableArea);
+        --         image.product = listProds[i];
+        --     end
+                      
+        --     i = i + 1
+            
+        --     if(i<=#listProds)then
+        --         local background = display.newImageRect("images/Teste.png",sizeBackGround,sizeBackGround,true);
+        --         background.x = x;
+        --         local image = display.newImageRect("images/produtos/smirnoff.png",sizeImage,sizeImage,true);
+        --         yB = yA+sizeBackGround;
+        --         image.x = x
+        --         image.y = yB
+        --         background.y = yB;
+        --         image.xScale = (scala1 * t1) / 100
+        --         image.yScale = (scala1 * t1) / 100
+        --         local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
+        --         touchableArea:setReferencePoint(display.CenterReferencePoint);
+        --         if(showTouchableArea == true) then
+        --             touchableArea:setFillColor(0,255,100,255);
+        --         else
+        --            touchableArea:setFillColor(0,255,100,0);
+        --         end 
+        --         touchableArea.x = x;
+        --         touchableArea.y = yB;
+        --         if(scala1 > 0) then
+        --             local thumbGroup = display.newGroup();
+        --             thumbGroup:insert(background);
+        --             thumbGroup:insert(image);
+        --             thumbGroup:insert(touchableArea);
+        --             touchableArea.image = image;
+        --             touchableArea.group = thumbGroup;
+        --             group:insert(thumbGroup);
+        --             inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
+        --             touchableArea.touch = onDragAndDropImage;
+        --             touchableArea:addEventListener("touch", touchableArea);
+        --             image.product = listProds[i];
+        --         end
+        --         i = i + 1
+            
+        --         if(i<=#listProds)then
+        --             local background = display.newImageRect("images/Teste.png",sizeBackGround,sizeBackGround,true);
+        --             background.x = x;
+        --             local image = display.newImageRect("images/produtos/smirnoff.png",sizeImage,sizeImage,true);
+        --             yC = yB + sizeBackGround;
+        --             image.x = x
+        --             image.y = yC
+        --             background.y = yC;
+        --             image.xScale = (scala1 * t1) / 100
+        --             image.yScale = (scala1 * t1) / 100
+        --             local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
+        --             touchableArea:setReferencePoint(display.CenterReferencePoint);
+        --             if(showTouchableArea == true) then
+        --                 touchableArea:setFillColor(0,255,100,255);
+        --             else
+        --                touchableArea:setFillColor(0,255,100,0);
+        --             end 
+        --             touchableArea.x = x;
+        --             touchableArea.y = yC;                   
+        --             if(scala1 > 0) then
+        --                 local thumbGroup = display.newGroup();
+        --                 thumbGroup:insert(background);
+        --                 thumbGroup:insert(image);
+        --                 thumbGroup:insert(touchableArea);
+        --                 touchableArea.image = image;
+        --                 touchableArea.group = thumbGroup;
+        --                 group:insert(thumbGroup);
+        --                 inMemDB:insertIntoProdTable(image.x-(image.width/2),image.y,listProds[i].title);
+        --                 touchableArea.touch = onDragAndDropImage;
+        --                 touchableArea:addEventListener("touch", touchableArea);
+        --                 image.product = listProds[i];
+        --             end
+        --             i = i + 1
+        --         end
+        --     end
+        --     table.insert(colunas,group);
+        --     scrollView:insert(colunas[numColunas]);
+        --     numColunas=numColunas+1;
+        --     local bgCarousel = display.newRect(0,0,scrollView.width,scrollView.height);
+        --     bgCarousel:setFillColor(255,255,255,0);
+        --     scrollView:insert(1,bgCarousel);
+        --     --incrementando x
+        --     x = x + sizeBackGround;
+        -- end
+        -- scrollView.colunas = colunas;
+        -- scrollView.x = 0;
+        -- scrollView.y = 0;
     end
     
     return home;

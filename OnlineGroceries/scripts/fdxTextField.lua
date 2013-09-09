@@ -4,7 +4,7 @@ function new(x,y,width,height,placeholder,align)
 
     local fakeTFGroup = display.newGroup();
     local fdxTFContainer = display.newRect(x, y, width, height);
-    local fdxTFText = display.newText(placeholder, x+display.contentWidth*0.02, y,width,height,system.nativeFont,display.contentHeight*0.04);
+    local fdxTFText = display.newText(placeholder, x+display.contentWidth*0.02, y,width,height,system.nativeFont,height*0.8);
     local isShowingNative = false;
     fdxTFText:setTextColor(200,200,200);
 

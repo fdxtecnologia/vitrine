@@ -43,6 +43,25 @@ function scene:willEnterScene( event )
 
 end
 
+-- local function onBtn1Touch(self,event)
+
+--     local phase = event.phase;
+
+--     if phase == "began" then
+--         self.cHome:buildCenario(self.listProds, self.group,2);
+--     end
+-- end
+
+-- local function onBtn2Touch(self,event)
+
+--     local phase = event.phase;
+
+--     if phase == "began" then
+--         self.cHome:buildCenario(self.listProds, self.group,3);
+--     end
+
+-- end
+
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
@@ -63,9 +82,32 @@ function scene:enterScene( event )
         
         
         listProds= json.decode(jsonStr);
-        cHome:buildCenario(listProds, group);
-        
-        
+
+        -- local gBtnCols = display.newGroup();
+
+        -- local btn1 = display.newRect(gBtnCols,0,0,100,100);
+        -- btn1:setFillColor(100,123,0,255);
+        -- btn1.cHome = cHome;
+        -- btn1.listProds = listProds;
+        -- btn1.group = group;
+        -- btn1.touch = onBtn1Touch;
+        -- btn1:addEventListener("touch",btn1);
+
+        -- local btn2 = display.newRect(gBtnCols,100,0,100,100);
+        -- btn2:setFillColor(50,100,0,255);
+        -- btn2.cHome = cHome;
+        -- btn2.listProds = listProds;
+        -- btn2.group = group;
+        -- btn2.touch = onBtn2Touch
+        -- btn2:addEventListener("touch",btn2);
+
+        -- group:insert(gBtnCols);
+        -- gBtnCols.x = display.contentWidth*0.5;
+        -- gBtnCols.y = display.contentHeight*0.5;
+
+
+
+        cHome:buildCenario(listProds, group,2);
         
 --        --Entra quando JSON é carregado
 --        local function loaded(event)
