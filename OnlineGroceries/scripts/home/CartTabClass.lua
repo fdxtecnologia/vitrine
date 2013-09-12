@@ -18,7 +18,7 @@ function new()
 
     --Navigate to CheckOut
     local function onCheckOutTouch(self,event)
-        storyboard.gotoScene("scripts.checkout.CheckoutScene");    
+        storyboard.gotoScene("scripts.checkout.CheckoutScene");
     end
     
     --Handle Deletebutton

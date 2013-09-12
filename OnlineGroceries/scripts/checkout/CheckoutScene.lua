@@ -1,10 +1,6 @@
 local storyboard = require( "storyboard" );
 local scene = storyboard.newScene();
 
-
--- local forward references should go here --
-local cCart = require("scripts.cart.CartClass");
-
 ---------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
@@ -13,7 +9,6 @@ local cCart = require("scripts.cart.CartClass");
 function scene:createScene( event )
     local group = self.view
     --display.setStatusBar();
-    local cCheckout = require("scripts.checkout.newCheckoutClass").new(group);
 end
 
 
@@ -27,8 +22,8 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
     local group = self.view
-    local cart = cCart.new()
-    --cCheckout:buildCheckout(group, cart)
+    local cCheckout = require("scripts.checkout.newCheckoutClass").new(group);
+    --storyboard.purgeScene("scripts.home.HomeScene");
 end
 
 

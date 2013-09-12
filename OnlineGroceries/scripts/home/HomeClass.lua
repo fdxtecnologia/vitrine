@@ -235,11 +235,44 @@ function new()
                     background:setReferencePoint(display.TopLeftReferencePoint);
                     background.x = 0;
                     background.y = 0;
-                    local image = display.newImageRect("images/produtos/"..listProds[prodIndex].sku..".jpg",sizeImage,sizeImage,true);
+                    local image = display.newImageRect("images/produtos/"..listProds[prodIndex].sku..".png",sizeImage,sizeImage,true);
                     image:setReferencePoint(display.BottomCenterReferencePoint);
                     image.x = sizeBackGround/2;
                     image.y = (11/12)*sizeBackGround;
                     image.product = listProds[prodIndex];
+                    local etiqueta = display.newImageRect("images/Etiqueta.png",sizeBackGround*0.7,sizeBackGround*0.15,true);
+                    etiqueta:setReferencePoint(display.BottomCenterReferencePoint);
+                    etiqueta.x = sizeBackGround/2;
+                    etiqueta.y = (25/26)*sizeBackGround;
+                    local favorite = display.newImageRect("images/Favorito.png",sizeBackGround*0.2,sizeBackGround*0.2,true);
+                    favorite.x = image.width*1.1;
+                    favorite.y = image.height*0.2;
+
+                    --------- VERIFICAÇÃO se É o FAVORITO AQUIII
+                    listProds[prodIndex].isFav = true;
+                    if(listProds[prodIndex].isFav == true) then
+                        favorite.alpha = 1;
+                    else
+                        favorite.alpha = 0;
+                    end
+                    --------------------------------------------
+                    local onSale = display.newImageRect("images/Promocao.png", sizeBackGround*0.25,sizeBackGround*0.2,true);
+                    onSale.x = image.x - image.width/2.5;
+                    onSale.y = image.y - image.height*0.95;
+
+                    --------- VERIFICAÇÃO se É Ofertar AQUIII
+                    listProds[prodIndex].isOnSale = false;
+                    if(listProds[prodIndex].isOnSale == true) then
+                        onSale.alpha = 1;
+                    else
+                        onSale.alpha = 0;
+                    end
+                    --------------------------------------------
+                    local priceText = display.newText("R$ "..listProds[prodIndex].price.."- UN",0,0,native.systemFont, display.contentHeight*0.03);
+                    priceText:setReferencePoint(display.CenterReferencePoint);
+                    priceText.x = etiqueta.x;
+                    priceText.y = etiqueta.y - (priceText.height/2)*1.5;
+                    priceText:setTextColor(0,0,0);
 
                     local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);
                     touchableArea:setReferencePoint(display.CenterReferencePoint);
@@ -256,6 +289,10 @@ function new()
                     thumbGroup:insert(background);
                     thumbGroup:insert(image);
                     thumbGroup:insert(touchableArea);
+                    thumbGroup:insert(etiqueta);
+                    thumbGroup:insert(priceText);
+                    thumbGroup:insert(favorite);
+                    thumbGroup:insert(onSale);
 
                     thumbGroup.x = xThumb;
                     thumbGroup.y = yThumb;

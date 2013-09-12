@@ -1,9 +1,11 @@
 module(...,package.seeall);
 saver = require( "scripts.Utils.dataSaver" );
+local storyboard = require( "storyboard" );
 
 function new(parentGroup)
 	
 	local checkOut  = {};
+	local widget = require("widget");
 
 	--Definitions
 	local cart = saver.loadValue("cart");
@@ -26,6 +28,7 @@ function new(parentGroup)
 		elseif(phase == "ended") then
 
 		end
+		return true;
 	end
 
 	local function onTfHoraPreferencial1Touch(self,event)
@@ -46,6 +49,7 @@ function new(parentGroup)
 				transition.to(picker.menu,{time = 100, y = 0});
 			end
 		end
+		return true;
 	end
 
 	local function onTfHoraPreferencial2Touch(self,event)
@@ -66,6 +70,7 @@ function new(parentGroup)
 				transition.to(picker.menu,{time = 100, y = 0});
 			end
 		end
+		return true;
 	end
 
 	local function onTfValidaMesTouch(self,event)
@@ -86,6 +91,7 @@ function new(parentGroup)
 		elseif(phase == "ended") then
 
 		end
+		return true;
 	end
 
 	local function onTfValidaAnoTouch(self,event)
@@ -106,6 +112,7 @@ function new(parentGroup)
 		elseif(phase == "ended") then
 
 		end
+		return true;
 	end
 
 	local function onNextBtnTouchFristStep(self,event)
@@ -113,13 +120,13 @@ function new(parentGroup)
 		local phase = event.phase;
 
 		if(phase == "ended") then
-			self.parent:setReferencePoint(display.TopRightReferencePoint);
-			transition.to(self.parent,{time = 300, x = 0});
+			self.parent:setReferencePoint(display.TopLeftReferencePoint);
+			transition.to(self.parent,{time = 300, x = (-1)*self.parent.width});
 			transition.to(self.parent.secondStep, {time = 300, x = 0});
 			transition.to(self.parent.lastStep, {time = 300, x = display.contentWidth});
 			self.parent.pageControl:setPage(self.parent.pageControl:getCurrentPage() + 1);
 		end
-
+		return true;
 	end
 
 	local  function onNextBtnTouchSecondStep(self,event)
@@ -133,6 +140,7 @@ function new(parentGroup)
 			transition.to(self.parent.lastStep, {time=300, x = 0});
 			self.parent.pageControl:setPage(self.parent.pageControl:getCurrentPage() + 1);
 		end
+		return true;
 	end
 
 	local function onSaveDate(self,event)
@@ -146,7 +154,7 @@ function new(parentGroup)
 			local values = self:getValues();
 			self.textDate.text = values[1].value.."/ "..values[2].value.."/ "..values[3].value;
 		end
-
+		return true;
 	end
 
 	local function onSaveYear(self,event)
@@ -161,6 +169,7 @@ function new(parentGroup)
 			local values = self:getValues();
 			self.textYear.text = values[1].value;
 		end
+		return true;
 	end
 
 	local function onSaveTime(self,event)
@@ -179,7 +188,7 @@ function new(parentGroup)
 			end
 			transition.to(self.fristStep, {time = 100, y = self.fristStep.y + display.contentHeight*0.1});
 		end
-
+		return true;
 	end
 
 	local function onSaveMonth(self,event)
@@ -194,7 +203,100 @@ function new(parentGroup)
 			local values = self:getValues();
 			self.textMonth.text = values[1].value;
 		end
+		return true;
 	end
+
+	local function onConfirmBtnTouch(self,event)
+		local phase = event.phase 
+		local customer = {
+			firstName = "Andre",
+			lastName = "Luis"
+		}
+
+		local payment = require("scripts.checkout.PaymentClass").new()
+
+		local order = require("scripts.order.OrderClass").new(customer, cart.products, payment)
+			
+
+		if "ended" == phase then
+			local json = require("json");
+			local cJson = require("scripts.Utils.JSONHandler").new()
+			local result
+			local body = json.encode(order)
+			print("Requisição: "..body)
+			local function callbackPlaceOrder(event)
+				if(event.isError) then
+					print("Erro ao enviar o pedido")
+				else
+					result = json.decode(event.response)
+				end
+			end
+			cJson:getJSONWithParams(PLACE_ORDER,cJson:buildParams(body),callbackPlaceOrder);
+		end
+		return true;
+	end
+
+	local function onBtnBackThirdStep(self,event)
+
+		local phase = event.phase;
+
+		if phase == "ended" then
+			self.parent:setReferencePoint(display.TopLeftReferencePoint);
+			transition.to(self.parent,{time = 300, x=display.contentWidth});
+			self.parent.fristStep:setReferencePoint(display.TopRightReferencePoint);
+			transition.to(self.parent.fristStep, {time=300, x = 0 });
+			self.parent.secondStep:setReferencePoint(display.TopLeftReferencePoint);
+			transition.to(self.parent.secondStep, {time=300, x = 0});
+			self.parent.pageControl:setPage(self.parent.pageControl:getCurrentPage() - 1);
+		end
+		return true;
+	end
+
+	local function onBackBtnTouchSecondStep(self,event)
+		local phase = event.phase;
+
+		if phase == "ended" then
+			self.parent:setReferencePoint(display.TopLeftReferencePoint);
+			transition.to(self.parent,{time = 300, x=display.contentWidth});
+			self.parent.fristStep:setReferencePoint(display.TopLeftReferencePoint);
+			transition.to(self.parent.fristStep, {time=300, x = 0 });
+			self.parent.lastStep:setReferencePoint(display.TopLeftReferencePoint);
+			transition.to(self.parent.secondStep, {time=300, x = display.contentWidth*2});
+			self.parent.pageControl:setPage(self.parent.pageControl:getCurrentPage() - 1);
+		end
+		return true;
+	end
+
+	local function onBackToShoppingTouch(self,event)
+		local phase = event.phase;
+
+		if phase == "ended" then
+			storyboard.gotoScene("scripts.home.HomeScene");
+		end
+		return true;
+	end
+
+	--Botão voltar ao supermercado
+	local gBtnBackToShopping = display.newGroup();
+	local btnBackToShopping = display.newCircle(0,0,20);
+	btnBackToShopping:setFillColor(0,0,0,0);
+	btnBackToShopping:setStrokeColor(255,255,255);
+	btnBackToShopping.strokeWidth = 3;
+
+	gBtnBackToShopping.x = display.contentWidth*0.06;
+	gBtnBackToShopping.y = display.contentHeight*0.9;
+
+	local cartImage = display.newImage("images/cart.png");
+	cartImage.width = display.contentWidth*0.05;
+	cartImage.height = display.contentHeight*0.07;
+	cartImage.x = 0;
+	cartImage.y = btnBackToShopping.height*0.03;
+
+	gBtnBackToShopping:insert(btnBackToShopping);
+	gBtnBackToShopping:insert(cartImage);
+
+	gBtnBackToShopping.touch = onBackToShoppingTouch;
+	gBtnBackToShopping:addEventListener("touch", gBtnBackToShopping);
 
 	--Grupo fristStep
 	local fristStep = display.newGroup();
@@ -284,11 +386,11 @@ function new(parentGroup)
 
 	local gBtnNextStep = display.newGroup();
 	local btnNextStep = display.newRoundedRect(gBtnNextStep,0,0,display.contentWidth*0.2, display.contentHeight*0.1,10);
-	local lblNextStep = display.newText(gBtnNextStep,"Continuar", 0,0, native.systemFont,display.contentHeight*0.06);
+	local lblNextStep = display.newText(gBtnNextStep,"Continuar >", 0,0, native.systemFont,display.contentHeight*0.06);
 	lblNextStep:setReferencePoint(display.CenterReferencePoint);
 	lblNextStep.x = btnNextStep.x;
 	lblNextStep.y = btnNextStep.y;
-	btnNextStep:setFillColor(50,30,220);
+	btnNextStep:setFillColor(50,30,220,0);
 	gBtnNextStep:setReferencePoint(display.TopRightReferencePoint);
 	gBtnNextStep.x = display.contentWidth*0.98;
 	gBtnNextStep.y = display.contentHeight*0.04;
@@ -378,18 +480,33 @@ function new(parentGroup)
 
 	local gBtnNextStep = display.newGroup();
 	local btnNextStep = display.newRoundedRect(gBtnNextStep,0,0,display.contentWidth*0.2, display.contentHeight*0.1,10);
-	local lblNextStep = display.newText(gBtnNextStep,"Continuar", 0,0, native.systemFont,display.contentHeight*0.06);
+	local lblNextStep = display.newText(gBtnNextStep,"Continuar >", 0,0, native.systemFont,display.contentHeight*0.06);
 	lblNextStep:setReferencePoint(display.CenterReferencePoint);
 	lblNextStep.x = btnNextStep.x;
 	lblNextStep.y = btnNextStep.y;
-	btnNextStep:setFillColor(50,30,220);
+	btnNextStep:setFillColor(50,30,220,0);
 	gBtnNextStep:setReferencePoint(display.TopRightReferencePoint);
 	gBtnNextStep.x = display.contentWidth*0.98;
 	gBtnNextStep.y = display.contentHeight*0.04;
 	secondStep:insert(gBtnNextStep);
 
+	local gBtnBackSecondStep = display.newGroup();
+	local btnBackSecondStep = display.newRoundedRect(gBtnBackSecondStep,0,0,display.contentWidth*0.2, display.contentHeight*0.1,10);
+	local lblBack = display.newText(gBtnBackSecondStep,"< Voltar", 0,0, native.systemFont,display.contentHeight*0.06);
+	lblBack:setReferencePoint(display.CenterReferencePoint);
+	lblBack.x = btnBackSecondStep.x;
+	lblBack.y = btnBackSecondStep.y;
+	btnBackSecondStep:setFillColor(50,30,220,0);
+	gBtnBackSecondStep:setReferencePoint(display.TopLeftReferencePoint);
+	gBtnBackSecondStep.x = display.contentWidth*0.02;
+	gBtnBackSecondStep.y = display.contentHeight*0.04;
+	secondStep:insert(gBtnBackSecondStep);
+
 	gBtnNextStep.touch = onNextBtnTouchSecondStep;
-	gBtnNextStep:addEventListener("touch",gBtnNextStep);	
+	gBtnNextStep:addEventListener("touch",gBtnNextStep);
+
+	gBtnBackSecondStep.touch = onBackBtnTouchSecondStep;
+	gBtnBackSecondStep:addEventListener("touch",gBtnBackSecondStep);		
 
 	--Group lastStep
 	local lastStep = display.newGroup();
@@ -408,10 +525,129 @@ function new(parentGroup)
 
 	qtyPages = qtyPages +1;
 
+	local finalTotal=0;
+
+	--Table View para confirmação do produto
+	local function onRowTouch(event)
+		-- body
+	end
+
+	local function onRowRender(event)
+		local phase = event.phase;
+		local row = event.row;
+		local product = cart.products[row.index];
+
+		local image = display.newImage("images/produtos/"..product.sku..".jpg");
+		image.width = display.contentHeight*0.15;
+		image.height = display.contentHeight*0.15;
+		image:setReferencePoint(display.TopLeftReferencePoint);
+
+		image.x = display.contentWidth*0.05;
+		image.y = display.contentHeight*0.03;
+
+		local desc = display.newText(product.title,display.contentWidth*0.2,display.contentHeight*0.05, native.systemFont, display.contentHeight*0.04);
+		desc:setTextColor(0,0,0);
+
+		local qty = display.newText("Quantidade: "..product.quantity, display.contentWidth*0.2, display.contentHeight*0.11, native.systemFont, display.contentHeight*0.04);
+		qty:setTextColor(0,0,0);
+
+		finalTotal = finalTotal + product.totalPrice;
+
+		local price = display.newText("R$ "..product.totalPrice, display.contentWidth*0.85, display.contentHeight*0.07, native.systemFont, display.contentHeight*0.04);
+		price:setTextColor(0,0,0);
+
+		row:insert(price);
+		row:insert(qty);
+
+		row:insert(desc);
+
+		row:insert(image);
+
+		print("Product INDEX : " , product)
+	end
+
+	local function tableViewListener(event)
+
+	end
+
+	local Mask = require("scripts.Utils.mask");
+
+	local OPTIONS_LIST_WIDTH = display.contentWidth;
+	local OPTIONS_LIST_HEIGHT = display.contentHeight*0.6;
+
+	local tableViewConfirm = widget.newTableView{
+
+		top = display.contentHeight*0.15,
+		width = OPTIONS_LIST_WIDTH,
+		height = OPTIONS_LIST_HEIGHT,
+		listener = tableViewListener,
+		onRowRender = onRowRender,
+		onRowTouch = onRowTouch,
+	}
+
+	Mask.applyMask({
+		object = tableViewConfirm,
+		width = OPTIONS_LIST_WIDTH,
+		height = OPTIONS_LIST_HEIGHT
+	});
+
+	local rowHeight = display.contentHeight*0.20;
+
+	for i=1,#cart.products do
+        tableViewConfirm:insertRow
+        {
+            isCategory = isCategory,
+            rowHeight = rowHeight,
+            rowColor = rowColor,
+            lineColor = lineColor,
+       	} 
+    end
+
+   	local totalText = display.newText("Total: R$ "..finalTotal,0, 0, native.systemFont,display.contentHeight*0.06);
+   	totalText:setReferencePoint(display.CenterReferencePoint);
+
+   	local gBtnDone = display.newGroup();
+	local btnDone = display.newRoundedRect(gBtnDone,0,0,display.contentWidth*0.2, display.contentHeight*0.1,10);
+	local lblDone = display.newText(gBtnDone,"Confirmar", 0,0, native.systemFont,display.contentHeight*0.06);
+	lblDone:setReferencePoint(display.CenterReferencePoint);
+	lblDone.x = btnDone.x;
+	lblDone.y = btnDone.y;
+	btnDone:setFillColor(50,30,220,0);
+	gBtnDone:setReferencePoint(display.TopRightReferencePoint);
+	gBtnDone.x = display.contentWidth*0.98;
+	gBtnDone.y = display.contentHeight*0.04;
+	lastStep:insert(gBtnDone);
+
+	local gBtnBackThirdStep = display.newGroup();
+	local btnBackThirdStep = display.newRoundedRect(gBtnBackThirdStep,0,0,display.contentWidth*0.2, display.contentHeight*0.1,10);
+	local lblBack = display.newText(gBtnBackThirdStep,"< Voltar", 0,0, native.systemFont,display.contentHeight*0.06);
+	lblBack:setReferencePoint(display.CenterReferencePoint);
+	lblBack.x = btnBackThirdStep.x;
+	lblBack.y = btnBackThirdStep.y;
+	btnBackThirdStep:setFillColor(50,30,220,0);
+	gBtnBackThirdStep:setReferencePoint(display.TopLeftReferencePoint);
+	gBtnBackThirdStep.x = display.contentWidth*0.02;
+	gBtnBackThirdStep.y = display.contentHeight*0.04;
+	lastStep:insert(gBtnBackThirdStep);
+
+	gBtnDone.touch = onConfirmBtnTouch;
+	gBtnDone:addEventListener("touch",gBtnDone);
+
+	gBtnBackThirdStep.touch = onBtnBackThirdStep;
+	gBtnBackThirdStep:addEventListener("touch",gBtnBackThirdStep);
+
+   	totalText.x = display.contentWidth*0.5;
+   	totalText.y = display.contentHeight*0.85;
+
+	lastStep:insert(totalText);
+
+	lastStep:insert(tableViewConfirm);
+
 	--Insert into de SceneGroup
 	parentGroup:insert(fristStep);
 	parentGroup:insert(secondStep);
 	parentGroup:insert(lastStep);
+	parentGroup:insert(gBtnBackToShopping);
 
 	fristStep.secondStep = secondStep;
 	fristStep.lastStep = lastStep;
