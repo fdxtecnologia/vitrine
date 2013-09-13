@@ -7,6 +7,7 @@ package br.com.fdxtecnologia.comparador.model;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 /**
@@ -40,6 +43,8 @@ public class Order implements Serializable {
     @Transient
     @XStreamImplicit(itemFieldName = "products")
     private List<ProductJSON> products;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date processedDate;
 
     public List<ProductJSON> getProducts() {
         return products;
@@ -103,5 +108,13 @@ public class Order implements Serializable {
 
     public void setShippingPrice(BigDecimal shippingPrice) {
         this.shippingPrice = shippingPrice;
+    }
+
+    public Date getProcessedDate() {
+        return processedDate;
+    }
+
+    public void setProcessedDate(Date processedDate) {
+        this.processedDate = processedDate;
     }
 }

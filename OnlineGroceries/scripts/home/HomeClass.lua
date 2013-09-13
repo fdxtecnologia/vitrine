@@ -249,7 +249,7 @@ function new()
                     favorite.y = image.height*0.2;
 
                     --------- VERIFICAÇÃO se É o FAVORITO AQUIII
-                    listProds[prodIndex].isFav = true;
+                    listProds[prodIndex].isFav = false;
                     if(listProds[prodIndex].isFav == true) then
                         favorite.alpha = 1;
                     else
@@ -261,7 +261,7 @@ function new()
                     onSale.y = image.y - image.height*0.95;
 
                     --------- VERIFICAÇÃO se É Ofertar AQUIII
-                    listProds[prodIndex].isOnSale = false;
+                    listProds[prodIndex].isOnSale = true;
                     if(listProds[prodIndex].isOnSale == true) then
                         onSale.alpha = 1;
                     else
