@@ -21,6 +21,7 @@ public class ProductJSON {
     private BigDecimal price;
     private BigDecimal totalPrice;
     private String sku;
+    private String unit;
     public static final Type TYPE = new TypeToken<List<ProductJSON>>() {
     }.getType();
 
@@ -32,12 +33,13 @@ public class ProductJSON {
     public ProductJSON() {
     }
 
-    public ProductJSON(Long idProduct, String sku, String title, Integer quantity, BigDecimal price) {
+    public ProductJSON(Long idProduct, String sku, String title, Integer quantity, BigDecimal price, String unit) {
         this.sku = sku;
         this.idProduct = idProduct;
         this.title = title;
         this.quantity = quantity;
         this.price = price;
+        this.unit = unit;
         this.totalPrice = this.price.multiply(new BigDecimal(this.quantity));
     }
 
@@ -47,6 +49,7 @@ public class ProductJSON {
         this.title = product.getTitle();
         this.quantity = 0;
         this.price = product.getPrice();
+        this.unit = product.getUnit();
         this.totalPrice = BigDecimal.ZERO;
     }
 
