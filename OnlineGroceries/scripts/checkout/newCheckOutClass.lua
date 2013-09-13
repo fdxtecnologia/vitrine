@@ -8,6 +8,7 @@ function new(parentGroup)
 	local widget = require("widget");
 
 	--Definitions
+	local customerData = saver.loadValue("customer");
 	local cart = saver.loadValue("cart");
 	local qtyPages = 0;
 
@@ -207,28 +208,24 @@ function new(parentGroup)
 	end
 
 	local function onConfirmBtnTouch(self,event)
-		local phase = event.phase 
-		local customer = {
-			firstName = "Andre",
-			lastName = "Luis"
-		}
+		local phase = event.phase;
 
-		local payment = require("scripts.checkout.PaymentClass").new()
+		local payment = require("scripts.checkout.PaymentClass").new();
 
-		local order = require("scripts.order.OrderClass").new(customer, cart.products, payment)
+		local order = require("scripts.order.OrderClass").new(customerData, cart.products, payment);
 			
 
 		if "ended" == phase then
 			local json = require("json");
-			local cJson = require("scripts.Utils.JSONHandler").new()
-			local result
-			local body = json.encode(order)
-			print("Requisição: "..body)
+			local cJson = require("scripts.Utils.JSONHandler").new();
+			local result;
+			local body = json.encode(order);
+			print("Requisição: "..body);
 			local function callbackPlaceOrder(event)
 				if(event.isError) then
-					print("Erro ao enviar o pedido")
+					print("Erro ao enviar o pedido");
 				else
-					result = json.decode(event.response)
+					result = json.decode(event.response);
 				end
 			end
 			cJson:getJSONWithParams(PLACE_ORDER,cJson:buildParams(body),callbackPlaceOrder);

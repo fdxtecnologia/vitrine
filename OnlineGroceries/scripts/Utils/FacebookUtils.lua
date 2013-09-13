@@ -1,4 +1,5 @@
 module(...,package.seeall);
+local saver = require("scripts.Utils.dataSaver");
 
 function new()
 	
@@ -31,12 +32,14 @@ function new()
 						firstName = response.first_name,
 						lastName = response.last_name,
 					}
+					--TESTARR
+					saver.saveValue("customer",customerObject);
 				end
 			elseif ( "dialog" == event.type ) then
 				print( "dialog", event.response )
 			end
 		end
-		facebook.login( fbUtils.appId, listener,{"publish_stream"})
+		facebook.login( fbUtils.appId, listener,{"publish_stream"});
 		return true
 	end
 	

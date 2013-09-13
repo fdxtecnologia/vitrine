@@ -1,4 +1,5 @@
 module(...,package.seeall);
+local saver = require("scripts.Utils.dataSaver");
 
 function new()
     local login = {};
@@ -10,6 +11,13 @@ function new()
         local fbUtils = require("scripts.Utils.FacebookUtils").new()
         local response = fbUtils:login()
         print ("Response: "..tostring(response))
+        if(response == true) then
+            local customerObject = {
+                firstName = "Sand",
+                lastName = "Box",
+            }
+            saver.saveValue("customer",customerObject);
+        end
         local storyboard  = require("storyboard");
         parentGroup:insert(title)
         if(response) then
