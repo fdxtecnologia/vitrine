@@ -336,6 +336,7 @@ function new(parentGroup)
 	datePicker.fristStep = fristStep;
 	datePicker:addEventListener("save",datePicker);
 
+	print("Chegou AQUI DEPOIS DATE PICKER");
 	local tfDataEntrega = display.newRect(display.contentWidth*0.37,display.contentHeight*0.35,display.contentWidth*0.5,display.contentHeight*0.08);
 	tfDataEntrega.datePicker = datePicker;
 	local tfDataEntregaContent = display.newText("Hoje", 0, 0, native.systemFont, display.contentHeight*0.06);
@@ -361,7 +362,7 @@ function new(parentGroup)
 
 	local tfHoraPreferencia1 = display.newRect(display.contentWidth*0.37, display.contentHeight*0.5,display.contentWidth*0.2,display.contentHeight*0.08);
 	tfHoraPreferencia1.hourPicker = hourPicker;
-	local hourNow = os.date("%l")..":"..os.date("%M").." "..os.date("%p");
+	local hourNow = os.date("%I")..":"..os.date("%M").." "..os.date("%p");
 	local tfHoraPreferencia1Content = display.newText(hourNow,0,0,native.systemFont,display.contentHeight*0.06);
 	tfHoraPreferencia1Content:setReferencePoint(display.CenterReferencePoint);
 	tfHoraPreferencia1Content.x = tfHoraPreferencia1.x;
