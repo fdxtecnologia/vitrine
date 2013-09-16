@@ -22,7 +22,7 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
     local group = self.view
-    local cCheckout = require("scripts.checkout.newCheckoutClass").new(group);
+    local cCheckout = require("scripts.checkout.newCheckOutClass").new(group);
     --storyboard.purgeScene("scripts.home.HomeScene");
 end
 
