@@ -361,7 +361,8 @@ function new(parentGroup)
 
 	local tfHoraPreferencia1 = display.newRect(display.contentWidth*0.37, display.contentHeight*0.5,display.contentWidth*0.2,display.contentHeight*0.08);
 	tfHoraPreferencia1.hourPicker = hourPicker;
-	local hourNow = os.date("%l")..":"..os.date("%M").." "..os.date("%p");
+
+	local hourNow = os.date("%I")..":"..os.date("%M").." "..os.date("%p");
 	local tfHoraPreferencia1Content = display.newText(hourNow,0,0,native.systemFont,display.contentHeight*0.06);
 	tfHoraPreferencia1Content:setReferencePoint(display.CenterReferencePoint);
 	tfHoraPreferencia1Content.x = tfHoraPreferencia1.x;
@@ -493,6 +494,8 @@ function new(parentGroup)
 
 	tfValidadeAno.touch = onTfValidaAnoTouch;
 	tfValidadeAno:addEventListener("touch",tfValidadeAno);
+
+
 
 	local gBtnNextStep = display.newGroup();
 	local btnNextStep = display.newRoundedRect(gBtnNextStep,0,0,display.contentWidth*0.2, display.contentHeight*0.1,10);

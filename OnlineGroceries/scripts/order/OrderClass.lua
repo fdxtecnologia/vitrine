@@ -36,7 +36,7 @@ function new(customer, products, payment)
     
     order.order.customer = customer
     order.order.products = {}
-    order.order.processedDate = year.."-"..month.."-"..day.." "..hour..":"..min..":"..sec;
+    --order.order.processedDate = year.."-"..month.."-"..day.." "..hour..":"..min..":"..sec;
     
     for i=1, #products do
         local prod = products[i]

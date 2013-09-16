@@ -1,4 +1,4 @@
-BASE_URL = "http://192.168.0.100:8080/vitrine-services/";
+BASE_URL = "http://localhost:8080/vitrine-services/";
 
 --- Products ---
 LIST_PRODS = BASE_URL.."products/listProducts"; -- Lista produtos com limite //params(int marketId, int page, int limit)--

@@ -21,9 +21,10 @@ public class ProductJSON {
     private BigDecimal price;
     private BigDecimal totalPrice;
     private String sku;
-    private String unit;
     public static final Type TYPE = new TypeToken<List<ProductJSON>>() {
     }.getType();
+    private boolean isFav;
+    private boolean isOnSale;
 
     public ProductJSON(Long idProduct, int quantity) {
         this.idProduct = idProduct;
@@ -33,23 +34,22 @@ public class ProductJSON {
     public ProductJSON() {
     }
 
-    public ProductJSON(Long idProduct, String sku, String title, Integer quantity, BigDecimal price, String unit) {
+    public ProductJSON(Long idProduct, String sku, String title, Integer quantity, BigDecimal price) {
         this.sku = sku;
         this.idProduct = idProduct;
         this.title = title;
         this.quantity = quantity;
         this.price = price;
-        this.unit = unit;
         this.totalPrice = this.price.multiply(new BigDecimal(this.quantity));
     }
 
     public ProductJSON(Product product) {
+
         this.sku = product.getSku();
         this.idProduct = product.getId();
         this.title = product.getTitle();
         this.quantity = 0;
         this.price = product.getPrice();
-        this.unit = product.getUnit();
         this.totalPrice = BigDecimal.ZERO;
     }
 
@@ -96,8 +96,26 @@ public class ProductJSON {
     public String getSku() {
         return sku;
     }
-    
+
     public void setSku(String sku) {
         this.sku = sku;
     }
+
+    public boolean isIsFav() {
+        return isFav;
+    }
+
+    public void setIsFav(boolean isFav) {
+        this.isFav = isFav;
+    }
+
+    public boolean isIsOnSale() {
+        return isOnSale;
+    }
+
+    public void setIsOnSale(boolean isOnSale) {
+        this.isOnSale = isOnSale;
+    }
+    
+    
 }

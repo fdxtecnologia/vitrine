@@ -43,8 +43,8 @@ public class Order implements Serializable {
     @Transient
     @XStreamImplicit(itemFieldName = "products")
     private List<ProductJSON> products;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date processedDate;
+    /*@Temporal(TemporalType.TIMESTAMP)
+     private Date processedDate;*/
 
     public List<ProductJSON> getProducts() {
         return products;
@@ -110,11 +110,11 @@ public class Order implements Serializable {
         this.shippingPrice = shippingPrice;
     }
 
-    public Date getProcessedDate() {
-        return processedDate;
-    }
+    /*public Date getProcessedDate() {
+     return processedDate;
+     }
 
-    public void setProcessedDate(Date processedDate) {
-        this.processedDate = processedDate;
-    }
+     public void setProcessedDate(Date processedDate) {
+     this.processedDate = processedDate;
+     }*/
 }

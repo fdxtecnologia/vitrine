@@ -1,34 +1,11 @@
 package com.mycompany.printerserverteste;
 
-import ch.ethz.vppserver.ippclient.IppResult;
-import ch.ethz.vppserver.schema.ippclient.Attribute;
-import ch.ethz.vppserver.schema.ippclient.AttributeGroup;
-import ch.ethz.vppserver.schema.ippclient.AttributeValue;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.ScrollPane;
-import java.util.Collections;
-import java.util.Comparator;
+import java.awt.PrintJob;
 import java.util.List;
-import java.util.Vector;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
-import org.cups4j.operations.ipp.IppGetPrinterAttributesOperation;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
-import com.sun.corba.se.impl.io.IIOPInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import org.cups4j.PrintJob;

@@ -18,8 +18,7 @@ import br.com.fdxtecnologia.vitrine.services.dao.OrderDAO;
 @Resource
 @Path("/order")
 public class OrderServices {
-    
-    
+
     private Result result;
     private OrderDAO orderDAO;
 
@@ -27,10 +26,15 @@ public class OrderServices {
         this.result = result;
         this.orderDAO = orderDAO;
     }
-    
+
     @Consumes("application/json")
-    public void placeOrder(Order order){
+    public void placeOrder(Order order) {
         System.out.println("Request Enviado");
         result.nothing();
+    }
+
+    @Path("/retrieveOrder")
+    public void retrieveOrder(Long id) {
+        
     }
 }
