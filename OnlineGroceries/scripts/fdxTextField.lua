@@ -25,8 +25,10 @@ function new(x,y,width,height,placeholder,align)
           native.setKeyboardFocus(nil);
           if(self.text == "") then
             fdxTFText.text = placeholder;
+            fdxTFText:setTextColor(200,200,200);
           else
             fdxTFText.text = self.text;
+            fdxTFText:setTextColor(0,0,0);
           end
           display.getCurrentStage():setFocus(nil);
           self:removeSelf();

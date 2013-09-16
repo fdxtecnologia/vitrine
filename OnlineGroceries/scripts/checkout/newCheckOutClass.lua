@@ -119,8 +119,12 @@ function new(parentGroup)
 	local function onNextBtnTouchFristStep(self,event)
 
 		local phase = event.phase;
+		local secondStep = self.parent;
 
 		if(phase == "ended") then
+
+			-- Realizar validação AQUIIII!!
+
 			self.parent:setReferencePoint(display.TopLeftReferencePoint);
 			transition.to(self.parent,{time = 300, x = (-1)*self.parent.width});
 			transition.to(self.parent.secondStep, {time = 300, x = 0});
@@ -132,8 +136,12 @@ function new(parentGroup)
 
 	local  function onNextBtnTouchSecondStep(self,event)
 		local phase = event.phase;
+		local fristStep = self.parent;
 
 		if(phase == "ended") then
+
+			-- Realizar validação AQUIIII!!
+
 			self.parent:setReferencePoint(display.TopRightReferencePoint);
 			transition.to(self.parent,{time = 300, x=0});
 			self.parent.fristStep:setReferencePoint(display.TopRightReferencePoint);
@@ -209,6 +217,9 @@ function new(parentGroup)
 
 	local function onConfirmBtnTouch(self,event)
 		local phase = event.phase;
+		local lastStep = self.parent;
+
+		-- Realizar validação AQUIIII!!
 
 		local payment = require("scripts.checkout.PaymentClass").new();
 
@@ -315,11 +326,11 @@ function new(parentGroup)
 	--Formulário Primeiro Passo
 	local tfEndereco = require("scripts.fdxTextField").new(display.contentWidth*0.37, display.contentHeight*0.2, display.contentWidth*0.5,display.contentHeight*0.08,"Endereço","center");
 	local lblEndereco = display.newText("Endereço:",display.contentWidth*0.2,display.contentHeight*0.2, native.systemFont,display.contentHeight*0.06);
+	fristStep.tfEndereco = tfEndereco;
 	fristStep:insert(tfEndereco);
 	fristStep:insert(lblEndereco);
 	
 	local datePicker = require("scripts.fdxDatePicker").new("date");
-	print("Backgroud Frame: ",datePicker.overlayFrame);
 	datePicker.isOpen = false;
 	datePicker.save = onSaveDate;
 	datePicker.fristStep = fristStep;
@@ -334,6 +345,7 @@ function new(parentGroup)
 	tfDataEntregaContent:setTextColor(0,0,0);
 	datePicker.textDate = tfDataEntregaContent;
 	local lblDataEntrega = display.newText("Data:",display.contentWidth*0.2,display.contentHeight*0.35, native.systemFont,display.contentHeight*0.06);
+	fristStep.tfDataEntregaContent = tfDataEntregaContent;
 	fristStep:insert(tfDataEntrega);
 	fristStep:insert(lblDataEntrega);
 	fristStep:insert(tfDataEntregaContent);
@@ -356,6 +368,7 @@ function new(parentGroup)
 	tfHoraPreferencia1Content.y = tfHoraPreferencia1.y;
 	tfHoraPreferencia1Content:setTextColor(0,0,0);
 	hourPicker.textTime1 = tfHoraPreferencia1Content;
+	fristStep.tfHoraPreferencia1Content = tfHoraPreferencia1Content;
 	fristStep:insert(tfHoraPreferencia1);
 	fristStep:insert(tfHoraPreferencia1Content);
 
@@ -367,6 +380,7 @@ function new(parentGroup)
 	tfHoraPreferencia2Content.y = tfHoraPreferencia2.y;
 	tfHoraPreferencia2Content:setTextColor(0,0,0);
 	hourPicker.textTime2 = tfHoraPreferencia2Content;
+	fristStep.tfHoraPreferencia2Content = tfHoraPreferencia2Content;
 	fristStep:insert(tfHoraPreferencia2);
 	fristStep:insert(tfHoraPreferencia2Content);
 
@@ -417,11 +431,13 @@ function new(parentGroup)
 	--Formulário Segundo Passo
 	local tfNumCartao = require("scripts.fdxTextField").new(display.contentWidth*0.4, display.contentHeight*0.2, display.contentWidth*0.5,display.contentHeight*0.08,"Numero cartão","center");
 	local lblNumCartao = display.newText("Número do cartão:",display.contentWidth*0.08,display.contentHeight*0.2, native.systemFont,display.contentHeight*0.06);
+	secondStep.tfNumCartao = tfNumCartao;
 	secondStep:insert(tfNumCartao);
 	secondStep:insert(lblNumCartao);
 
 	local tfNumCVV = require("scripts.fdxTextField").new(display.contentWidth*0.5, display.contentHeight*0.35, display.contentWidth*0.4,display.contentHeight*0.08,"Código de segurança","center");
 	local lblNumCVV = display.newText("Código de segurança:",display.contentWidth*0.08,display.contentHeight*0.35, native.systemFont,display.contentHeight*0.06);
+	secondStep.tfNumCVV = tfNumCVV;
 	secondStep:insert(tfNumCVV);
 	secondStep:insert(lblNumCVV);
 
@@ -438,6 +454,7 @@ function new(parentGroup)
 	tfValidaMesContent.x = tfValidadeMes.x;
 	tfValidaMesContent.y = tfValidadeMes.y;
 	tfValidaMesContent:setTextColor(0,0,0);
+	secondStep.tfValidaMesContent = tfValidaMesContent;
 	monthPicker.textMonth = tfValidaMesContent;
 	secondStep:insert(tfValidadeMes);
 	secondStep:insert(tfValidaMesContent);
@@ -456,6 +473,7 @@ function new(parentGroup)
 	tfValidaAnoContent.y = tfValidadeAno.y;
 	tfValidaAnoContent:setTextColor(0,0,0);
 	yearPicker.textYear = tfValidaAnoContent;
+	secondStep.tfValidaAnoContent = tfValidaAnoContent;
 	secondStep:insert(tfValidadeAno);
 	secondStep:insert(tfValidaAnoContent);
 
@@ -466,6 +484,7 @@ function new(parentGroup)
 
 	local tfTitular = require("scripts.fdxTextField").new(display.contentWidth*0.4, display.contentHeight*0.65, display.contentWidth*0.5,display.contentHeight*0.08,"Titular","center");
 	local lblTitular = display.newText("Titular:",display.contentWidth*0.08,display.contentHeight*0.65, native.systemFont,display.contentHeight*0.06);
+	secondStep.tfTitular = tfTitular;
 	secondStep:insert(tfTitular);
 	secondStep:insert(lblTitular);
 

@@ -10,7 +10,7 @@ function new()
     gCart.y = 0;
     local pullTab = display.newCircle(gCart,0, display.contentHeight*0.1, 25);
     local cart = {products={}};
-    pullTab:setFillColor(125, 125, 125, 255); 
+    pullTab:setFillColor(200, 200, 200, 255); 
     local widget = require( "widget" );
     local tableRowsCount = 0;
 
@@ -99,17 +99,20 @@ function new()
         rowImg.y = row.contentHeight*0.05;
         
         local rowQty = display.newText(row, "Quantidade: "..product.quantity, 0,0, "Helvetica", display.contentWidth*0.02);
+        rowQty:setTextColor(0,0,0);
         rowQty:setReferencePoint(display.CenterReferencePoint);
         rowQty.x = row.contentWidth*0.47;
         rowQty.y = row.contentHeight*0.75;
         row.rowQty = rowQty;
         
         local rowTitle = display.newText(row,product.title, 0, 0, "Helvetica", display.contentWidth*0.02);
+        rowTitle:setTextColor(0,0,0);
         rowTitle:setReferencePoint(display.CenterReferencePoint);
         rowTitle.x = row.contentWidth*0.47;
         rowTitle.y = row.contentHeight*0.5;
         
         local rowPrice = display.newText(row,"R$ "..product.totalPrice, 0, 0, "Helvetica", display.contentWidth*0.025);
+        rowPrice:setTextColor(0,0,0);
         rowPrice:setReferencePoint(display.CenterRightReferencePoint);
         rowPrice.x = row.contentWidth - row.contentWidth*0.1;
         rowPrice.y = row.contentHeight*0.5;
@@ -194,12 +197,12 @@ function new()
     cart.subtotal = 0;
 
     local topTab = display.newRect(0, 0, display.contentWidth*0.06, display.contentHeight);
-    topTab:setFillColor(125, 125, 125, 255);
+    topTab:setFillColor(200, 200, 200, 255);
     
     local totalTab = display.newRect(0,0, display.contentWidth, display.contentHeight*0.1);
     totalTab:setReferencePoint(display.BottomLeftReferencePoint);
     totalTab.y = display.contentHeight;
-    totalTab:setFillColor(125, 125, 125, 255);
+    totalTab:setFillColor(200, 200, 200, 255);
 
     print("topTab WIDTH ", topTab.width)
 
@@ -219,6 +222,7 @@ function new()
     gCheckOutBtn:addEventListener("touch", gCheckOutBtn);
     
     local totalText = display.newText("Subtotal: R$ 0.00 ",0,0,"Helvetica",20);
+    totalText:setTextColor(0,0,0);
     totalText:setReferencePoint(display.BottomCenterReferencePoint);
     totalText.x = display.contentWidth *0.5;
     totalText.y = display.contentHeight - display.contentHeight*0.01;
@@ -270,9 +274,9 @@ function new()
         local rowHeight = display.contentHeight*0.2;
         local rowColor = 
         { 
-            default = { 0, 0, 0 },
+            default = { 255, 255, 255 },
         }
-        local lineColor = { 0, 0, 0 }
+        local lineColor = { 255, 255, 255 }
 
 
         gCart.tableView:removeSelf();
@@ -313,9 +317,9 @@ function new()
         local rowHeight = display.contentHeight*0.2;
         local rowColor = 
         { 
-            default = { 0, 0, 0 },
+            default = { 255, 255, 255 },
         }
-        local lineColor = { 0, 0, 0 }
+        local lineColor = { 255, 255, 255 }
 
         for i=1,#cart.products do
             gCart.tableView:insertRow
@@ -339,9 +343,9 @@ function new()
         local rowHeight = display.contentHeight*0.2;
         local rowColor = 
         { 
-            default = { 0, 0, 0 },
+            default = { 255, 255, 255 },
         }
-        local lineColor = { 0, 0, 0 }
+        local lineColor = { 255, 255, 255 }
 
         cart.subtotal = cart.subtotal + product.price;
         totalText.text = "Subtotal: R$ "..cart.subtotal;
