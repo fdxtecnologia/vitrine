@@ -12,7 +12,6 @@ function new()
         if event.phase == "began" then
             self.startX = self.x;
             self.startY = self.y;
-            self.initPosY = self.y;
             self:toFront();
             display.getCurrentStage():setFocus(self)
             self.isFocus = true;
@@ -28,6 +27,39 @@ function new()
                     else
                         self.x = display.contentWidth;
                     end
+                display.getCurrentStage():setFocus(nil);
+                self.isFocus = nil;
+            end
+        end
+        return true;
+    end
+
+    local function onDragUser(self,event)
+
+        local phase = event.phase;
+
+        if event.phase == "began" then
+            self:setReferencePoint(display.TopRightReferencePoint);
+            self.startX = self.x-display.contentHeight*0.1;
+            self.startY = self.y;
+            self:toFront();
+            display.getCurrentStage():setFocus(self);
+            self.isFocus = true;
+        end
+        if(self.isFocus == true) then
+            if phase == "moved" then
+                local movedX = event.x - self.startX;
+                self.x = self.x + movedX;
+                print("SELF X : ", movedX);
+                self.startX = event.x;
+            elseif phase == "ended" then
+                if (self.x >= display.contentWidth*0.6) then
+                    self:setReferencePoint(display.TopLeftReferencePoint);
+                    self.x = 0;
+                else
+                    self:setReferencePoint(display.TopLeftReferencePoint);
+                    self.x = (-1)*display.contentWidth;
+                end
                 display.getCurrentStage():setFocus(nil);
                 self.isFocus = nil;
             end
@@ -108,7 +140,8 @@ function new()
         
         numImagesPerCol = numColunas;
 
-        local gCart = require("scripts.home.CartTabClass").new();     
+        local gCart = require("scripts.home.CartTabClass").new();
+        local gUser = require("scripts.user.userTab").new();
         
         local carousel = display.newGroup(); 
         
@@ -129,9 +162,14 @@ function new()
         gCart.touch = onDragGCart;
         gCart:addEventListener("touch",gCart);
 
+        gUser.touch = onDragUser;
+        gUser:addEventListener("touch",gUser);
+
         parentGroup.gCart = gCart;
         parentGroup:insert(carousel);
         parentGroup:insert(gCart);
+        parentGroup:insert(gUser);
+        parentGroup.gUser = gUser;
         parentGroup:insert(textFieldSearch);
         parentGroup.searchField = textFieldSearch;
         carousel.initX = carousel.x;

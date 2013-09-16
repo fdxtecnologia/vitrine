@@ -15,12 +15,11 @@ function new()
 				if ( "login" == event.phase ) then
 					facebook.request( "me" )
 					access_token = event.token
-					print( access_token )
+					print( "access token ",access_token )
 				end
 			elseif ( "request" == event.type ) then
 				local response = event.response
 				if ( not event.isError ) then
-					print ("Not Error - Aeaeaeaeae")
 					response = json.decode( event.response )
 					local customerInfo = {
 						name = response.name,
@@ -33,14 +32,19 @@ function new()
 						lastName = response.last_name,
 					}
 					--TESTARR
+					print ("Response Event ",event.response," Response ", json.decode(event.response));
 					saver.saveValue("customer",customerObject);
 				end
 			elseif ( "dialog" == event.type ) then
-				print( "dialog", event.response )
+				print( "dialog", event.response)
 			end
 		end
 		facebook.login( fbUtils.appId, listener,{"publish_stream"});
 		return true
+	end
+
+	function fbUtils:getProfilePicture()
+
 	end
 	
 	return fbUtils;
