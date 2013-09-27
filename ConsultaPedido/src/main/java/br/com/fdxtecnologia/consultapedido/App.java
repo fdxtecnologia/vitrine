@@ -32,10 +32,10 @@ public class App {
                 for (Order o : result) {
                     List<Order> data = new ArrayList<Order>();
                     data.add(o);
-                    JasperReport report = JasperCompileManager.compileReport("/vish/order.jrxml");
+                    JasperReport report = JasperCompileManager.compileReport("/Users/guilherme/Desktop/report/order.jrxml");
                     JasperPrint print = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(data));
-                    JasperExportManager.exportReportToPdfFile(print, "/vish/order" + x + ".pdf");
-                    FileInputStream file = new FileInputStream(new File("/vish/order" + x + ".pdf"));
+                    JasperExportManager.exportReportToPdfFile(print, "/Users/guilherme/Desktop/report/order" + x + ".pdf");
+                    FileInputStream file = new FileInputStream(new File("/Users/guilherme/Desktop/report/order" + x + ".pdf"));
                     List<CupsPrinter> printers = new CupsClient().getPrinters();
                     PrintJob job = new PrintJob.Builder(file).jobName("TESTE").userName("localhost").copies(1).build();
                     printers.get(0).print(job);

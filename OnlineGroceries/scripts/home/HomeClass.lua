@@ -1,10 +1,17 @@
 module(...,package.seeall);
+local saver = require("scripts.Utils.dataSaver");
 
 function new()
     
     local home = {};
 
-    local numImagesPerCol = 2;
+    local numImagesPerCol = saver.loadValue("numRows");
+    
+    if(numImagesPerCol == nil) then
+
+        numImagesPerCol = 2;
+        saver.saveValue("numRows", numImagesPerCol);
+    end
     
     local function onDragGCart(self,event)
         local phase = event.phase;
@@ -122,10 +129,36 @@ function new()
 
         if phase == "editing" then
             --Aqui deve ser feita a pesquisa e mover o scrollbar para posição X armazenada no banco
-            local resultSet = inMemDB:searchByName(event.text, 1);
+            local resultSet = inMemDB:searchByName(event.text, 0);
+            print("SELF Y ",self.fake.y," AND SELF X ",self.fake.x);
+            local gContainerSearchResults = display.newGroup(); -- Container com conteudo do resultado da busca
+            local containerSearchResults = display.newRect(gContainerSearchResults,0,0, display.contentWidth,display.contentHeight*0.1);
+            gContainerSearchResults.x = 0;
+            gContainerSearchResults.y = self.fake.y + ((self.fake.height/2)*1.05);
+            
             if(#resultSet < 1 ) then
                 print("Nenhum resultado");
+                local txtNoneResults = display.newText("Nenhum resultado", 0, 0, native.systemFont, display.contentHeight*0.06);
+                txtNoneResults:setReferencePoint(display.CenterReferencePoint);
+                txtNoneResults.x = gContainerSearchResults.width/2;
+                txtNoneResults.y = gContainerSearchResults.height/2;
+                txtNoneResults:setTextColor(0,0,0);
+                gContainerSearchResults:insert(txtNoneResults);
             else
+
+                local posX = display.contentWidth*0.03;
+                local posY = containerSearchResults.height/4;
+
+                for i=1, #resultSet do
+                    local gProdSearch = display.newGroup();
+                    local txtProd = display.newText(resultSet[i].nameProduct.." |",posX,posY,native.systemFont, display.contentHeight*0.04);
+                    txtProd:setTextColor(0,0,0);
+                    gProdSearch:insert(txtProd);
+                    gContainerSearchResults:insert(gProdSearch);
+                    posX = posX + txtProd.width; 
+                    print("Nome do produto: ", resultSet[i].nameProduct);
+                end
+
                 local name = resultSet[1].nameProduct;
                 local posX = resultSet[1].posX; 
 
@@ -135,10 +168,8 @@ function new()
     end
     
     --Construção do cenario
-    function home:buildCenario(listProds,parentGroup,numColunas)
+    function home:buildCenario(listProds,parentGroup)
         --Taxa de incremento da escala
-        
-        numImagesPerCol = numColunas;
 
         local gCart = require("scripts.home.CartTabClass").new();
         local gUser = require("scripts.user.userTab").new();
@@ -208,6 +239,15 @@ function new()
             if(event.phase=="moved")then
                     local x = (event.x - event.xStart) + image.markX;
                     local y = (event.y - event.yStart) + image.markY;
+                    if(event.x >= gCart.x)then
+                        gCart.topTab:setFillColor(50,250,30);
+                        gCart.pullTab:setFillColor(50,250,30);
+                        gCart.totalTab:setFillColor(50,250,30);
+                    else
+                        gCart.topTab:setFillColor(200, 200, 200, 255);
+                        gCart.totalTab:setFillColor(200, 200, 200, 255);
+                        gCart.pullTab:setFillColor(200, 200, 200, 255);
+                    end
                     image.x, image.y = x,y;
             elseif(event.phase=="ended")then
                     if(event.x >= gCart.x)then
@@ -218,6 +258,9 @@ function new()
                             product = image.product
                         }
                         gCart:dispatchEvent(event);
+                        gCart.topTab:setFillColor(200, 200, 200, 255);
+                        gCart.totalTab:setFillColor(200, 200, 200, 255);
+                        gCart.pullTab:setFillColor(200, 200, 200, 255);
                     else
                         local event = {
                            name = "prod",
@@ -257,7 +300,7 @@ function new()
             for j=1, numImagesPerCol do
                 if(listProds[prodIndex] == nil) then
                     local thumbGroup = display.newGroup();
-                    local background = display.newImageRect("images/Teste.png",sizeBackGround,sizeBackGround,true);
+                    local background = display.newImageRect("images/Imagem22.png",sizeBackGround,sizeBackGround,true);
                     background:setReferencePoint(display.TopLeftReferencePoint);
                     background.x = 0;
                     background.y = 0;
@@ -268,25 +311,25 @@ function new()
                     yThumb = yThumb + sizeBackGround;
                 else
                     local thumbGroup = display.newGroup();
-                    local background = display.newImageRect("images/Teste.png",sizeBackGround,sizeBackGround,true);
+                    local background = display.newImageRect("images/Imagem22.png",sizeBackGround,sizeBackGround,true);
                     background:setReferencePoint(display.TopLeftReferencePoint);
                     background.x = 0;
                     background.y = 0;
                     local image = display.newImageRect("images/produtos/"..listProds[prodIndex].sku..".png",sizeImage,sizeImage,true);
                     image:setReferencePoint(display.BottomCenterReferencePoint);
                     image.x = sizeBackGround/2;
-                    image.y = (11/12)*sizeBackGround;
+                    image.y = (6/7)*sizeBackGround;
                     image.product = listProds[prodIndex];
-                    local etiqueta = display.newImageRect("images/Etiqueta.png",sizeBackGround*0.7,sizeBackGround*0.15,true);
+                    local etiqueta = display.newImageRect("images/Etiqueta.png",sizeBackGround*0.6,sizeBackGround*0.14,true);
                     etiqueta:setReferencePoint(display.BottomCenterReferencePoint);
                     etiqueta.x = sizeBackGround/2;
-                    etiqueta.y = (25/26)*sizeBackGround;
+                    etiqueta.y = sizeBackGround;
                     local favorite = display.newImageRect("images/Favorito.png",sizeBackGround*0.2,sizeBackGround*0.2,true);
                     favorite.x = image.width*1.1;
                     favorite.y = image.height*0.2;
 
                     --------- VERIFICAÇÃO se É o FAVORITO AQUIII
-                    listProds[prodIndex].isFav = false;
+                    listProds[prodIndex].isFav = true;
                     if(listProds[prodIndex].isFav == true) then
                         favorite.alpha = 1;
                     else
@@ -298,17 +341,17 @@ function new()
                     onSale.y = image.y - image.height*0.95;
 
                     --------- VERIFICAÇÃO se É Ofertar AQUIII
-                    listProds[prodIndex].isOnSale = true;
+                    listProds[prodIndex].isOnSale = false;
                     if(listProds[prodIndex].isOnSale == true) then
                         onSale.alpha = 1;
                     else
                         onSale.alpha = 0;
                     end
                     --------------------------------------------
-                    local priceText = display.newText("R$ "..listProds[prodIndex].price.."- UN",0,0,native.systemFont, display.contentHeight*0.03);
+                    local priceText = display.newText("R$ "..listProds[prodIndex].price.."- UN",0,0,native.systemFont, sizeBackGround*0.07);
                     priceText:setReferencePoint(display.CenterReferencePoint);
                     priceText.x = etiqueta.x;
-                    priceText.y = etiqueta.y - (priceText.height/2)*1.5;
+                    priceText.y = etiqueta.y - (priceText.height/1.25);
                     priceText:setTextColor(0,0,0);
 
                     local touchableArea = display.newRect(0,0,touchableAreaSize,touchableAreaSize);

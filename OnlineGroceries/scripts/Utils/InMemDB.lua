@@ -29,7 +29,13 @@ function new()
 
 		local str = text.."%";
 
-		local searchQueryStr = [[SELECT * FROM prodPosSession WHERE nameProduct LIKE ']]..str..[[' LIMIT ]]..limit..[[;]]
+		local searchQueryStr;
+
+		if(limit == 0) then
+			searchQueryStr = [[SELECT * FROM prodPosSession WHERE nameProduct LIKE ']]..str..[[';]]
+		else
+			searchQueryStr = [[SELECT * FROM prodPosSession WHERE nameProduct LIKE ']]..str..[[' LIMIT ]]..limit..[[;]]
+		end
 
 		for row in db:nrows(searchQueryStr) do
 			table.insert(resultSet,row);

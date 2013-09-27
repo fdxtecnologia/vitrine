@@ -24,6 +24,7 @@ settings = {
 	},
 	android =
    	{
+   	  "android.inputType.TYPE_CLASS_TEXT",
       usesPermissions =
       {
          "android.permission.INTERNET",

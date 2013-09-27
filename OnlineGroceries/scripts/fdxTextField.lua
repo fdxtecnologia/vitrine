@@ -8,6 +8,8 @@ function new(x,y,width,height,placeholder,align)
     local isShowingNative = false;
     fdxTFText:setTextColor(200,200,200);
 
+    fakeTFGroup.fake = fdxTFContainer;
+
     fakeTFGroup:insert(fdxTFContainer);
     fakeTFGroup:insert(fdxTFText);
 
@@ -56,6 +58,7 @@ function new(x,y,width,height,placeholder,align)
             local nativeTextField = native.newTextField(x, y, width, height);
             nativeTextField.userInput = onTouchTextFieldListener;
             nativeTextField.align = align;
+            nativeTextField.inputType = "text";
             nativeTextField.font = native.newFont( native.systemFontBold, height*1.1 )
             nativeTextField:addEventListener("userInput", nativeTextField);
             fakeTFGroup:insert(nativeTextField);

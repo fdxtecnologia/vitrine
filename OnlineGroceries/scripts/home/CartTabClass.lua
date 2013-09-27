@@ -9,10 +9,12 @@ function new()
     gCart.x = display.contentWidth;
     gCart.y = 0;
     local pullTab = display.newCircle(gCart,0, display.contentHeight*0.1, 25);
+    gCart.pullTab = pullTab;
     local cart = {products={}};
     pullTab:setFillColor(200, 200, 200, 255); 
     local widget = require( "widget" );
     local tableRowsCount = 0;
+    local qtyProds = 0;
 
     local loadFile = saver.loadValue("cart");
 
@@ -198,7 +200,13 @@ function new()
 
     local topTab = display.newRect(0, 0, display.contentWidth*0.06, display.contentHeight);
     topTab:setFillColor(200, 200, 200, 255);
-    
+
+    local countText = display.newText("0",0,0,native.systemFont, display.contentHeight*0.04);
+    countText:setTextColor(0,0,0);
+    countText:setReferencePoint(display.CenterReferencePoint);
+    countText.x = pullTab.x - (pullTab.width/6);
+    countText.y = pullTab.y;
+
     local totalTab = display.newRect(0,0, display.contentWidth, display.contentHeight*0.1);
     totalTab:setReferencePoint(display.BottomLeftReferencePoint);
     totalTab.y = display.contentHeight;
@@ -243,7 +251,10 @@ function new()
     gCart:insert(tableView);
     tableView:toFront();
     gCart:insert(topTab);
+    gCart.topTab = topTab;
+    gCart:insert(countText);
     gCart:insert(totalTab);
+    gCart.totalTab = totalTab;
     gCart:insert(gCheckOutBtn);
     gCart:insert(totalText);
     
@@ -263,12 +274,12 @@ function new()
         end
 
         cart.subtotal = valor;
-        totalText.text = "Subtotal: R$ "..valor;
+        totalText.text ="Quantidade: "..qtyProds.."   Subtotal: R$ "..cart.subtotal;
     end
 
     function gCart:remakeTable()
 
-
+        qtyProds = 0;
         local isRepeated = false;
         local isCategory = false
         local rowHeight = display.contentHeight*0.2;
@@ -305,8 +316,11 @@ function new()
                 rowHeight = rowHeight,
                 rowColor = rowColor,
                 lineColor = lineColor,
-            } 
+            }
+            qtyProds=qtyProds+cart.products[i].quantity;
         end
+
+        countText.text = qtyProds;
 
         gCart:refreshSubtotal();       
     end
@@ -347,8 +361,6 @@ function new()
         }
         local lineColor = { 255, 255, 255 }
 
-        cart.subtotal = cart.subtotal + product.price;
-        totalText.text = "Subtotal: R$ "..cart.subtotal;
         for i=1,#cart.products do
             print("Entrou laço "..cart.products[i].title);
             if(cart.products[i].idProduct == product.idProduct)then
@@ -374,6 +386,9 @@ function new()
             tableRowsCount = tableRowsCount +1;
         end 
        saver.saveValue("cart", cart);
+       qtyProds=qtyProds+1;
+       countText.text = qtyProds;
+       
     end
 
     if(loadFile == nil) then
@@ -387,7 +402,7 @@ function new()
                 gCart:remakeTable();
                 print("LOAD FILE "..cart.products[1].title);
             end
-    end
+    end 
      
     return gCart;
 end

@@ -107,7 +107,7 @@ function scene:enterScene( event )
 
 
 
-        cHome:buildCenario(listProds, group,2);
+        cHome:buildCenario(listProds, group);
         
 --        --Entra quando JSON é carregado
 --        local function loaded(event)

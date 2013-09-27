@@ -362,10 +362,6 @@ function new(parentGroup)
 
 	local tfHoraPreferencia1 = display.newRect(display.contentWidth*0.37, display.contentHeight*0.5,display.contentWidth*0.2,display.contentHeight*0.08);
 	tfHoraPreferencia1.hourPicker = hourPicker;
-<<<<<<< HEAD
-
-=======
->>>>>>> 10721d7d29a32e2874cd9a391bb7c9b60265a175
 	local hourNow = os.date("%I")..":"..os.date("%M").." "..os.date("%p");
 	local tfHoraPreferencia1Content = display.newText(hourNow,0,0,native.systemFont,display.contentHeight*0.06);
 	tfHoraPreferencia1Content:setReferencePoint(display.CenterReferencePoint);
