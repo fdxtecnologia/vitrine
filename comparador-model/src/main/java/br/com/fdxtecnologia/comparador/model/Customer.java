@@ -4,7 +4,10 @@
  */
 package br.com.fdxtecnologia.comparador.model;
 
+import com.google.gson.Gson;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  *
@@ -29,10 +33,13 @@ public class Customer implements Serializable {
     private String firstName;
     private String lastName;
     private String cpf;
-    @OneToMany(cascade = CascadeType.ALL, fetch =FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Address> addresses;
     @ManyToOne(cascade = CascadeType.ALL)
     private User user;
+    private String cardInfo;
+    @Transient
+    private List<CreditCard> cardListJSON;
 
     public Long getId() {
         return id;
@@ -80,5 +87,39 @@ public class Customer implements Serializable {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getCardInfo() {
+        return cardInfo;
+    }
+
+    public void setCardInfo(String cardInfo) {
+        this.cardInfo = cardInfo;
+    }
+
+    public List<CreditCard> getCardListJSON() {
+        return cardListJSON;
+    }
+
+    public void setCardListJSON(List<CreditCard> cardListJSON) {
+        this.cardListJSON = cardListJSON;
+    }
+
+    public void addCreditCard(CreditCard cc, Gson gson) {
+        if (this.getCardInfo() != null) {
+            this.setCardListJSON((List<CreditCard>) gson.fromJson(this.getCardInfo(), CreditCard.TYPE));
+        } else {
+            this.setCardListJSON(new ArrayList<CreditCard>());
+        }
+        this.getCardListJSON().add(cc);
+        this.setCardInfo(gson.toJson(this.getCardListJSON(), CreditCard.TYPE));
+    }
+
+    public void removeCreditCard(CreditCard cc, Gson gson) {
+        this.setCardListJSON((List<CreditCard>) gson.fromJson(this.getCardInfo(), CreditCard.TYPE));
+        if (this.cardListJSON.contains(cc)) {
+            this.cardListJSON.remove(cc);
+        }
+        this.setCardInfo(gson.toJson(this.getCardListJSON(), CreditCard.TYPE));
     }
 }

@@ -56,9 +56,9 @@ public class Utils {
         DecimalFormat df = new DecimalFormat("#,###,##0.00");
         return df.format(df);
     }
-    
-    public static String digestToMD5(String str){
-        try{
+
+    public static String digestToMD5(String str) {
+        try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(str.getBytes());
             byte[] digest = md.digest();
@@ -67,74 +67,105 @@ public class Utils {
                 sb.append(Integer.toHexString((int) (b & 0xff)));
             }
             return sb.toString();
-        }catch(NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             System.err.println(e);
         }
         return null;
     }
-    
-    public static boolean validaCPF (String strCpf ) {
 
-        int     d1, d2;
-        int     digito1, digito2, resto;
-        int     digitoCPF;
-        String  nDigResult;
+    public static boolean validaCPF(String strCpf) {
+
+        int d1, d2;
+        int digito1, digito2, resto;
+        int digitoCPF;
+        String nDigResult;
 
         d1 = d2 = 0;
         digito1 = digito2 = resto = 0;
 
-        for (int nCount = 1; nCount < strCpf.length() -1; nCount++)
-        {
-           digitoCPF = Integer.valueOf (strCpf.substring(nCount -1, nCount)).intValue();
+        for (int nCount = 1; nCount < strCpf.length() - 1; nCount++) {
+            digitoCPF = Integer.valueOf(strCpf.substring(nCount - 1, nCount)).intValue();
 
-           d1 = d1 + ( 11 - nCount ) * digitoCPF;
+            d1 = d1 + (11 - nCount) * digitoCPF;
 
-           d2 = d2 + ( 12 - nCount ) * digitoCPF;
+            d2 = d2 + (12 - nCount) * digitoCPF;
         };
 
         resto = (d1 % 11);
 
-        if (resto < 2)
-           digito1 = 0;
-        else
-           digito1 = 11 - resto;
+        if (resto < 2) {
+            digito1 = 0;
+        } else {
+            digito1 = 11 - resto;
+        }
 
         d2 += 2 * digito1;
 
         resto = (d2 % 11);
 
-        if (resto < 2)
-           digito2 = 0;
-        else
-           digito2 = 11 - resto;
+        if (resto < 2) {
+            digito2 = 0;
+        } else {
+            digito2 = 11 - resto;
+        }
 
-        String nDigVerific = strCpf.substring (strCpf.length()-2, strCpf.length());
+        String nDigVerific = strCpf.substring(strCpf.length() - 2, strCpf.length());
 
         nDigResult = String.valueOf(digito1) + String.valueOf(digito2);
 
         return nDigVerific.equals(nDigResult);
-     }
-    
-    public static boolean validateCEP(String cep){
-      
-      boolean isValid = false;  
-        
-      if (cep.length() == 8)
-      {
-         cep = cep.substring(0, 5) + "-" + cep.substring(5, 8);
-         //txt.Text = cep;
-      }
-      
-      Pattern pattern = Pattern.compile("[0-9]{5}-[0-9]{3}");
-      
-      Matcher m = pattern.matcher(cep);
-      
-      while(m.find()){
-          if(m.group().equals(cep)){
-              isValid=true;
-          }
-      }
-      
-       return isValid;
     }
+
+    public static boolean validateCEP(String cep) {
+
+        boolean isValid = false;
+
+        if (cep.length() == 8) {
+            cep = cep.substring(0, 5) + "-" + cep.substring(5, 8);
+            //txt.Text = cep;
+        }
+
+        Pattern pattern = Pattern.compile("[0-9]{5}-[0-9]{3}");
+
+        Matcher m = pattern.matcher(cep);
+
+        while (m.find()) {
+            if (m.group().equals(cep)) {
+                isValid = true;
+            }
+        }
+
+        return isValid;
+    }
+
+    
+    /**
+     * TODO adaptar para java
+     */
+    /*public String GetCreditCardType(string CreditCardNumber) {
+        Pattern regVisa = new Regex("^4[0-9]{12}(?:[0-9]{3})?$");
+        Regex regMaster = new Regex("^5[1-5][0-9]{14}$");
+        Regex regExpress = new Regex("^3[47][0-9]{13}$");
+
+
+        if (regVisa.IsMatch(CreditCardNumber)) {
+            return "VISA";
+        }
+        if (regMaster.IsMatch(CreditCardNumber)) {
+            return "MASTER";
+        }
+        if (regExpress.IsMatch(CreditCardNumber)) {
+            return "AEXPRESS";
+        }
+        if (regDiners.IsMatch(CreditCardNumber)) {
+            return "DINERS";
+        }
+        if (regDiscover.IsMatch(CreditCardNumber)) {
+            return "DISCOVERS";
+        }
+        if (regJSB.IsMatch(CreditCardNumber)) {
+            return "JSB";
+        }
+        return "invalid";
+    }*/
 }

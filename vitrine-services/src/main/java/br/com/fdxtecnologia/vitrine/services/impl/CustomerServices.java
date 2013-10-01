@@ -11,11 +11,12 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.com.fdxtecnologia.comparador.model.Address;
+import br.com.fdxtecnologia.comparador.model.CreditCard;
 import br.com.fdxtecnologia.comparador.model.Customer;
 import br.com.fdxtecnologia.vitrine.services.dao.CustomerDAO;
 import com.google.gson.Gson;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -45,7 +46,7 @@ public class CustomerServices {
     @Path("/{id}/addresses")
     public void listAddresses(Long id) {
         Customer c = dao.findById(id);
-        if(c != null){
+        if (c != null) {
             result.use(Results.json()).withoutRoot().from(new ArrayList<Address>(c.getAddresses())).serialize();
         } else {
             result.use(Results.http()).sendError(500, "Invalid Customer");
@@ -55,6 +56,23 @@ public class CustomerServices {
     @Post
     @Consumes("application/json")
     public void loginCustomerFB(Customer customer) {
-        System.out.println("VISh");
+    }
+
+    @Post
+    @Consumes("application/json")
+    public void addCustomer(Customer customer) {
+        dao.saveOrUpdate(customer);
+        result.use(Results.json()).withoutRoot().from(customer).serialize();
+    }
+
+    @Path("/cardList/{customerId}")
+    public void getCustomerCardList(Long customerId) {
+        List<CreditCard> cards = dao.getCreditCardsByCustomer(customerId);
+        for (int x = 0; x < cards.size(); x++) {
+            String num = cards.get(x).getNumber();
+            num = num.substring(0, 4) + "XXXXXXXX" + num.substring(12, 16);
+            cards.get(x).setNumber(num);
+        }
+        result.use(Results.json()).withoutRoot().from(cards).serialize();
     }
 }
