@@ -1,10 +1,10 @@
 module(...,package.seeall);
-local json = require("json");
 
 function new()
     
     local jsonHandler = {};
     local strJson;
+    local json = require("json");
     
     function jsonHandler:getJSON(url)
       network.request( url, "GET", networkListener );
@@ -30,7 +30,7 @@ function new()
     end
 
     function jsonHandler:encode(tableToJson)
-        return json:encode(tableToJson);
+        return json.encode(tableToJson);
     end
 
     function jsonHandler:decode(jsonToTable)

@@ -172,7 +172,7 @@ function new()
         --Taxa de incremento da escala
 
         local gCart = require("scripts.home.CartTabClass").new();
-        local gUser = require("scripts.user.userTab").new();
+        --local gUser = require("scripts.user.userTab").new();
         
         local carousel = display.newGroup(); 
         
@@ -193,14 +193,14 @@ function new()
         gCart.touch = onDragGCart;
         gCart:addEventListener("touch",gCart);
 
-        gUser.touch = onDragUser;
-        gUser:addEventListener("touch",gUser);
+        --gUser.touch = onDragUser;
+        --gUser:addEventListener("touch",gUser);
 
         parentGroup.gCart = gCart;
         parentGroup:insert(carousel);
         parentGroup:insert(gCart);
-        parentGroup:insert(gUser);
-        parentGroup.gUser = gUser;
+        --parentGroup:insert(gUser);
+        --parentGroup.gUser = gUser;
         parentGroup:insert(textFieldSearch);
         parentGroup.searchField = textFieldSearch;
         carousel.initX = carousel.x;

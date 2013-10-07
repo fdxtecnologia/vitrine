@@ -7,7 +7,7 @@ function main()
     
    	-- storyboard.gotoScene("scripts.home.HomeScene");
     --storyboard.gotoScene("scripts.checkout.CheckoutScene");
-    storyboard.gotoScene("scripts.login.LoginScene")
+    storyboard.gotoScene("scripts.home.HomeScene");
 
       
 end
