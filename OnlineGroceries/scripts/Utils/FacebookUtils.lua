@@ -1,5 +1,5 @@
 module(...,package.seeall);
-local saver = require("scripts.Utils.dataSaver").new();
+local saver = require("scripts.Utils.dataSaver");
 
 function new()
 	

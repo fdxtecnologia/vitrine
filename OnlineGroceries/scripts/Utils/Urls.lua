@@ -6,7 +6,8 @@ LIST_ALL_PRODS_MK = BASE_URL.."products/listMarketProducts"; --Lista todos produ
 
 --- Customer ---
 LOGIN_FACEBOOK = BASE_URL.."customers/loginFB"; --login com as informações do facebook //params(Customer customer)
-SIGNUP_CUSTOMER = BASE_URL.."/customer/addCustomer"; --Cadastro do usuário //params(Customer customer)
+SIGNUP_CUSTOMER = BASE_URL.."customers/addCustomer"; --Cadastro do usuário //params(Customer customer)
+LOGIN = BASE_URL.."authenticate"; --Login do usuário sem informações do facebook  //params(String login, String password)
 
 --- Order ---
 PLACE_ORDER = BASE_URL.."order/placeOrder"; -- Salvar pedido e efetuar pagamento //params (Order order)

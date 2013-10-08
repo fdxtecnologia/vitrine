@@ -47,24 +47,25 @@ function new()
         return true;
     end
 
-    local function onLogWithFBTouch(self,event)
-        local phase = event.phase;
-
-        if(phase == "ended")then
-
-
-
-        end
-
-        return true;
-    end
-
     local function onLoginTouch(self,event)
         local phase = event.phase;
 
         if phase == "ended" then
 
+            local body = "login="..self.email.text.."&password="..self.senha.text;--Params para a requisição //Ex. "<var>=<value>&<var2>=<value2>&.."
+            local params = JSONHandler:buildParams(body);
 
+            local function callBackLogin(event)
+                if(event.isError) then
+
+                    print("ERRO ", result);
+                else
+
+                    print("LOGIN EFETUADO");
+                end
+            end
+
+            JSONHandler:getJSONWithParams(LOGIN,params,callBackLogin);
         end
 
         return true;
@@ -75,17 +76,18 @@ function new()
 
         if phase == "ended" then
 
-            local customer = {
+            print("Nome :", self.tfNomeUp.text);
+
+            local customer = { customer ={
                     firstName = self.tfNomeUp.text,
                     lastName = "",
                     user = {
                         name = self.tfEmailUp.text,
                         email = self.tfEmailUp.text,
                         password = self.tfSenhaUp.text, 
-                    }
+                    },
+                }
             };
-
-            print("Chegou aqui");
 
             local body = JSONHandler:encode(customer);
 
@@ -96,7 +98,7 @@ function new()
                     print("Erro ao enviar o pedido");
                 else
                     result = JSONHandler:decode(event.response);
-                    print("SIGNUP FEITO ", result);
+                    print("SIGNUP FEITO ",resut);
                 end
             end
 
@@ -124,7 +126,7 @@ function new()
             title.y = display.contentHeight*0.08;
 
             local tfEmail = require("scripts.fdxTextField").new(display.contentWidth*0.05,display.contentHeight*0.2, display.contentWidth*0.4,display.contentHeight*0.08,"E-Mail","center");
-            local tfSenha = require("scripts.fdxTextField").new(display.contentWidth*0.05,display.contentHeight*0.35, display.contentWidth*0.4,display.contentHeight*0.08,"Senha","center");
+            local tfSenha = require("scripts.fdxTextField").new(display.contentWidth*0.05,display.contentHeight*0.35, display.contentWidth*0.4,display.contentHeight*0.08,"Senha","center","password");
 
             local gBtnLogin = display.newGroup();
             local btnLogin = display.newRect(gBtnLogin,0,0, display.contentWidth*0.3, display.contentHeight*0.08);
@@ -155,8 +157,8 @@ function new()
 
             local tfNomeUp = require("scripts.fdxTextField").new(display.contentWidth*0.55,display.contentHeight*0.3, display.contentWidth*0.4,display.contentHeight*0.08,"Nome","center");
             local tfEmailUp = require("scripts.fdxTextField").new(display.contentWidth*0.55,display.contentHeight*0.45, display.contentWidth*0.4,display.contentHeight*0.08,"E-Mail","center");
-            local tfSenhaUp = require("scripts.fdxTextField").new(display.contentWidth*0.55,display.contentHeight*0.6, display.contentWidth*0.4,display.contentHeight*0.08,"Senha","center");
-            local tfConfirmUp = require("scripts.fdxTextField").new(display.contentWidth*0.55,display.contentHeight*0.75, display.contentWidth*0.4,display.contentHeight*0.08,"Corfirma Senha","center");
+            local tfSenhaUp = require("scripts.fdxTextField").new(display.contentWidth*0.55,display.contentHeight*0.6, display.contentWidth*0.4,display.contentHeight*0.08,"Senha","center","password");
+            local tfConfirmUp = require("scripts.fdxTextField").new(display.contentWidth*0.55,display.contentHeight*0.75, display.contentWidth*0.4,display.contentHeight*0.08,"Corfirma Senha","center","password");
 
             local gBtnSignUp = display.newGroup();
             local btnSignUp = display.newRect(gBtnSignUp,0,0, display.contentWidth*0.3, display.contentHeight*0.08);
@@ -183,6 +185,8 @@ function new()
             gBtnSignUp:addEventListener("touch", gBtnSignUp);
 
 
+            gBtnLogin.email = tfEmail;
+            gBtnLogin.senha = tfSenha;
             gBtnLogin.touch = onLoginTouch;
             gBtnLogin:addEventListener("touch",gBtnLogin);
 

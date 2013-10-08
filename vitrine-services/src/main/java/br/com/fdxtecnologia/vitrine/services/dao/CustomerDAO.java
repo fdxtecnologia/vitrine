@@ -26,7 +26,9 @@ public class CustomerDAO extends GenericDAO<Customer> {
     }
 
     public Customer getCustomerByUserAndPassword(String login, String password) {
-        return null;
+        Query q = session.createQuery("from Customer c where c.user.name = '"+login+"' and c.user.password = '"+password+"'");
+        Customer c = (Customer)q.uniqueResult();
+        return c;
     }
 
     public List<Address> getCustomerAddresses(Customer customer) {

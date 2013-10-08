@@ -1,6 +1,6 @@
 module(...,package.seeall);
 
-function new(x,y,width,height,placeholder,align)
+function new(x,y,width,height,placeholder,align,type)
 
     local fakeTFGroup = display.newGroup();
     local fdxTFContainer = display.newRect(x, y, width, height);
@@ -18,11 +18,13 @@ function new(x,y,width,height,placeholder,align)
         local phase = event.phase;
         if phase == "userInput" then
           display.getCurrentStage():setFocus(self);
+          fakeTFGroup.text = self.text;
         elseif phase=="submitted" then
           fdxTFText.text = self.text;
           native.setKeyboardFocus(nil);
           display.getCurrentStage():setFocus(nil);
           isShowingNative = false;
+          fakeTFGroup.text = self.text;
         elseif phase == "ended" then
           native.setKeyboardFocus(nil);
           if(self.text == "") then
@@ -34,6 +36,7 @@ function new(x,y,width,height,placeholder,align)
           end
           display.getCurrentStage():setFocus(nil);
           self:removeSelf();
+          fakeTFGroup.text = self.text;
           isShowingNative = false;
         elseif phase == "editing" then
           print("Letra"..event.newCharacters);
@@ -44,6 +47,7 @@ function new(x,y,width,height,placeholder,align)
             oldText = event.oldText,
             text = event.text
           }
+          fakeTFGroup.text = self.text;
           fakeTFGroup:dispatchEvent(eventLetters);
         end
         return true;
@@ -59,6 +63,9 @@ function new(x,y,width,height,placeholder,align)
             nativeTextField.userInput = onTouchTextFieldListener;
             nativeTextField.align = align;
             nativeTextField.inputType = "text";
+            if(type == "password") then
+              nativeTextField.isSecure = true;
+            end
             nativeTextField.font = native.newFont( native.systemFontBold, height*1.1 )
             nativeTextField:addEventListener("userInput", nativeTextField);
             fakeTFGroup:insert(nativeTextField);
